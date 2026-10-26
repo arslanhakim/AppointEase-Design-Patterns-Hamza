@@ -1,0 +1,74 @@
+@startuml
+title Implemented S4 - all nine patterns, atomic commits and post-commit delivery
+actor "Application caller / integration test" as Caller
+participant BookingFacade as Facade
+participant CommittedEventDispatcher as Dispatch
+participant AppointmentAssembler as Assembler
+participant AppointmentBuilder as Builder
+participant AppointmentModeFactory as Mode
+participant "AppointmentService decorator chain" as Extras
+participant AppointmentCreator as Creator
+participant InMemoryAppointmentRepository as Repo
+participant ReservationRules as Rules
+participant AvailabilityStrategy as Strategy
+participant AppointmentEventPublisher as Publisher
+participant NotificationListener as Notify
+participant AuditListener as Audit
+participant ExternalCalendarAdapter as Adapter
+participant SimulatedExternalCalendarClient as Legacy
+Caller -> Facade : book(commandId, request)
+Facade -> Dispatch : execute(commandId, command, operation)
+critical dispatcher monitor (shared per repository)
+  alt receipt already exists
+    Dispatch --> Facade : original BookingResult (different input rejects)
+  else new command
+    Dispatch -> Assembler : execute facade operation / assemble(request)
+    Assembler -> Repo : resolve immutable catalogs
+    Assembler -> Builder : id/customer/provider/service/start/mode/extras
+    Builder -> Mode : createMeetingDetails + createParticipationInstructions
+    Assembler -> Builder : build(injected creator, time)
+    Builder -> Extras : quote(service)
+    Builder -> Creator : create(validated spec)
+    Creator -> Creator : overridden createAppointment(spec)
+    Creator --> Assembler : pending appointment subtype
+    Assembler --> Dispatch : candidate via facade operation
+    Dispatch -> Repo : reserve(candidate, strategy)
+    critical repository mutation lock
+      Repo -> Repo : capture time, check latest state/catalog/ID
+      Repo -> Rules : validate intrinsic and collision constraints
+      Rules -> Strategy : preparationBuffer(provider)
+      Rules -> Rules : validate effective occupancy/hours
+      alt rejected
+        Repo --> Dispatch : exception; no mutation or event
+      else accepted
+        Repo -> Repo : commit reservation + revision + immutable event
+        Repo --> Dispatch : committed appointment
+      end
+    end
+    opt successful commit (repository lock released)
+      Dispatch -> Repo : events() snapshot in global commit order
+      loop each undelivered committed event
+        Dispatch -> Publisher : publish(event)
+        Publisher -> Notify : onAppointmentEvent(event)
+        Notify --> Publisher : success or isolated RuntimeException
+        Publisher -> Audit : onAppointmentEvent(event)
+        Audit --> Publisher : success or isolated RuntimeException
+        Dispatch -> Adapter : synchronize(event)
+        Adapter -> Legacy : apply(code, ID, epoch millis, zone, rN, event ID)
+        Legacy --> Adapter : success or numeric legacy error
+        Adapter --> Dispatch : success or typed warning
+      end
+      Dispatch -> Dispatch : retain receipt and warnings
+      Dispatch --> Facade : BookingResult(snapshot, revision, warnings)
+    end
+  end
+end
+Facade --> Caller : result or rejected-command exception
+note over Facade, Repo
+Confirm/cancel/complete/reschedule operate on latest stored Appointment.
+State delegates eligibility and immutable replacement.
+Same event/delivery path follows each successful mutation.
+External conflicts warn after commit; local repository owns collision prevention.
+No callbacks hold the repository mutation lock. Console calls this facade.
+end note
+@enduml

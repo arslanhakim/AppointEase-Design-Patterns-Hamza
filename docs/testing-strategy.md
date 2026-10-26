@@ -1,0 +1,69 @@
+# Testing strategy
+
+## Historical progression (final S6 evidence below)
+
+S0 has one JUnit Jupiter test, MainSmokeTest.welcomeApplicationExitsSuccessfully. It launches a separate JVM using the current JDK and compiled Main location, closes it on timeout, and checks exact output and exit 0. This avoids replacing global System.out and verifies observable process behavior. Surefire fails if no tests are found.
+
+S1 adds DomainModelTest (construction/defensive copies), TimeAndMoneyTest (money, intervals, timezone/DST), AppointmentTest (aggregate validation, compatibility, working hours), and AppointmentStateTest (all state/operation pairs, time boundaries, unchanged snapshots, proposal-only rescheduling). DomainFixtures uses fixed clocks exclusively. State tests use status switches only to construct test scenarios and express expectations; production lifecycle code delegates polymorphically. These tests supply real evidence for the corresponding rows below; S2 adds CreationPatternsTest (23 invocations) and DecoratorTest (14 invocations). Their actual coverage includes all four kind/mode combinations, creator override dispatch, missing inputs, mismatched kinds/families/session identities, explicit duration checks, quote validation, decorator orders/duplicates/rounding, immutable snapshots and lifecycle subtype retention. All 119 original tests remain. S3 adds SchedulingTest (41 invocations), covering Strategy, atomic persistence and six coordinated concurrency scenarios. S4 adds BookingIntegrationTest and CalendarObserverTest for Adapter/Facade/Observer, events and concurrency; console-feature tests were subsequently implemented in S5, as recorded below.
+
+## Verification map (implemented evidence in the slice records below)
+
+| Area | Cases and assertions |
+| --- | --- |
+| Values and invariants | Required fields/IDs, positive service duration, derived end, invalid/equal/reversed intervals, supported service and mode, immutable copies, no quantity concepts. BigDecimal 1.005 -> EUR 1.01, zero/negative amounts, additive snapshot totals. |
+| State | Parameterize every state x confirm/cancel/complete/reschedule pair; test exact now=start and now=end boundaries with fixed Clock. Verify unchanged aggregate/revision on rejection and terminal-state invariance. |
+| Scheduling | Half-open overlap (contains, contained, identical, partial, adjacent); provider isolation; working-hour boundaries; pending/confirmed/completed occupancy; cancelled release; future validation; both policies and buffered interval edges. |
+| Time | Europe/Vilnius 2026-03-29 03:30 gap rejection; 2026-10-25 03:30 chooses 00:30Z; explicit alternate zone, invalid zone ID; duration spanning DST; dated working-hours gap rejection; no system-clock dependence. |
+| Creation patterns | Factory override produces correct type; builder rejects incomplete/mismatched input; both family products matched and mixed products rejected; no invalid intermediate appointment leaks. |
+| Decorator | Base, priority, reminder, both; fee/instruction delegation, duplicate rejection, deterministic composition; hard constraints unchanged by priority. |
+| Adapter | Millisecond timestamps including before epoch; overflow/submillisecond rejection; legacy 400/409/503/unknown codes; retained cause; explicit zone; operation/id/revision translation; duplicate event idempotency. |
+| Observer | Reserve then confirm/reschedule/cancel/complete histories; exactly one event per successful command; revisions and global order; NotificationListener fails yet AuditListener receives; no events/calendar calls for rejects; snapshot immutability. |
+| Facade/integration | In-memory real collaborators and fake calendar; complete lifecycle with both creators/families/add-ons/strategies; not-found handling; calendar failure reports committed success warning; terminal rejections preserve history. |
+| Concurrency | CountDownLatch/barrier releases two tasks into overlapping reserve: one success, one unavailable, one event. Disjoint/provider-independent requests both succeed; duplicate IDs one winner. Race reschedule against booking/cancel/confirm; serialization leaves one legal state with no lost original slot on failure. Use Future timeouts, shut down executors, no sleeps. Repeat controlled scenarios only as needed; races alone are not a proof, review lock scope too. |
+| Console | Inject input/output and fixed Clock; scripted valid journey, empty/non-numeric/unknown IDs, invalid dates, DST warning, EOF, explicit exit. Process jar smoke checks output, runtime offline, success status and no input hang. |
+| Architecture | Source import check forbids domain -> outer layers, application -> infrastructure/presentation; composition root exemption only at Main. Review public mutation paths and no concrete adapter construction in application. |
+
+Use JUnit 5 parameterized tests (included by junit-jupiter) and standard-library fakes/executors; no Mockito or database required. Favor outcome assertions over private implementation details. Test package mirrors source package; `*Test` names are discovered by Surefire. `mvn clean verify` runs the suite; explicit jar execution validates packaging. Tests must never contact real services.
+
+## Evidence and limits
+
+Record actual commands, tool versions, exit codes and Surefire totals in rubric-evidence.md after each slice. Test cases here are planned until linked to actual test methods. S6 validated and rendered all six PlantUML sources; rendering remains a separate documentation command rather than a Maven build step. In-memory delivery is best effort across process failure; do not claim durable messaging, exactly-once crash recovery, benchmarks, or production scalability.
+
+S2 verification: October 26, 2026, mvn clean verify exit 0, 156 passed, 0 failures/errors/skips; packaged welcome application exit 0. Domain import/source checks were reviewed, not added as automated architecture tests.
+
+## S3 implemented scheduling verification
+
+SchedulingTest has 41 passing invocations. It exercises hard intrinsic validation through existing S1/S2 APIs, catalog integrity/defensive copies, pending-only insertion, future-time revalidation, business zone, policy substitution/invalid output, symmetric half-open overlap boundaries, effective working-hour containment, retained buffer snapshots, all occupying statuses, cancellation reuse, sorted immutable history, failed commands and subtype/family/add-on/State preservation. The repository captures exactly one Clock instant per transaction; a deterministic advancing-clock test detects accidental extra reads. Other scheduling tests use explicit fixed instants; an injected test Clock advances only when the test requests a lifecycle boundary.
+
+Six concurrency cases coordinate two worker starts using CountDownLatch, bounded await/Future.get and finally shutdownNow/awaitTermination: same provider/slot (one winner), different providers (two winners), duplicate IDs (one winner), book versus reschedule (one target winner and original preserved on rejection), two reschedules (loser retains original), confirm versus reschedule (both updates survive). No sleeps or ordering assumptions. These tests demonstrate valid outcomes; the source lock-scope review establishes that all reads/validation/write operations serialize and no check-then-save escape exists.
+
+Final S3 clean verify: October 26, 2026 at 19:49:42 +05:00, exit 0, 197 tests, no failures/errors/skips; welcome jar exit 0. Original 156 tests retained. Historical S3 boundary: these integration tests were then planned; S4 evidence below supersedes it. Console tests remain S5. UML rendering and permanent automated architecture tests remain unverified/deferred.
+
+## S4 implemented integration verification
+
+BookingIntegrationTest covers all-nine-pattern complete lifecycle, browsing/advisory availability, cancellation/reuse, typed calendar warnings, invalid commands/catalogs, no events for rejection, revision chains and immutable snapshots, stable command-ID retries, replay suppression, direct repository event draining, listener failure isolation and reentrancy guards, callbacks outside repository lock, both service mode families and subtype/fee retention. Five latch-coordinated concurrency tests cover conflicting bookings, disjoint bookings/global order, confirmation versus rescheduling, cancellation versus rescheduling, and retries across facades sharing one dispatcher. Existing SchedulingTest retains its six repository races.
+
+CalendarObserverTest covers genuine primitive-format translation, explicit zone and DST instant preservation, negative epoch milliseconds, overflow/submillisecond rejection, numeric errors with retained causes, malformed legacy inputs, stale revisions/tombstones, subscriptions/unsubscribe/snapshot ordering, replay suppression, isolated failures and reentrant publication. No Thread.sleep or network calls. Permanent automated architecture tests and rendered UML remain deferred; source imports and locks are manually reviewed in S4.
+
+Retry semantics require the same request and collaborator instances. Delivery failures are RuntimeExceptions; fatal JVM errors/crash recovery are outside guarantees. External conflicts warn after commit, so local availability intentionally does not predict external acceptance.
+
+## S5 implemented console verification
+
+ConsoleApplicationTest adds 26 invocations through the real Main.create composition with fixed Clock and byte-array streams: browsing/navigation, both kinds/modes, optional fee snapshots, confirm/reschedule/cancel/complete, invalid transition and too-early completion, overlap rejection, adjacency, buffered reschedule rejection preserving original, cancellation/reuse, advisory/no-confirm writes, observer/history output, isolated application instances and configured zone. Parameterized malformed input and EOF-at-prompt tests recover/exit without hanging. Existing 235 domain/integration invocations remain unchanged; MainSmokeTest's one process check now closes stdin explicitly and checks welcome/EOF/goodbye instead of the obsolete welcome-only output. Total: 262 passing; no sleeps or external service calls.
+
+Final mvn clean verify at 23:31:46 +05:00 on October 26: BUILD SUCCESS, exit 0; 262 tests, zero failures/errors/skips, independently summed from Surefire XML. scripts/demo.ps1 actually launches the packaged JAR and verifies a moving next-weekday scenario, four bookings, rejection/adjacency/buffer/lifecycle/reuse/modes/fees/history plus explicit exit and empty/mid-booking EOF. All three processes exit 0. Transcripts: target/demo-workflow.txt, demo-eof.txt, demo-partial-eof.txt. Script's initial IANA lookup failure on Windows PowerShell was corrected with a Windows timezone fallback before successful rerun. No Java change followed the final build.
+
+The startup historical clock is a seed-only replay, not a runtime time-travel feature. Main composition tests exercise immediate completion of that elapsed confirmed appointment. Final rendering/terminal-width QA and automated import rules remain S6 recommendations; source import scans alone are not permanent architecture tests.
+
+## S6 final evidence (supersedes historical deferrals above)
+
+Final source build October 27, 2026 at 00:05:37 +05:00: `mvn clean verify`, exit 0, 264 tests, zero failures/errors/skips. The original 262 remain; ArchitectureTest adds two checks using JDK jdeps on production bytecode and reflection over static fields. No new dependency or production Java change. The layer graph passes; package-level cycles inside domain/application are explicitly disclosed in S6-AUDIT.md.
+
+Packaged demo and standalone `scripts/verify-console.ps1` pass. The latter verifies smoke, invalid-input recovery, empty/mid-operation EOF, UTC and Asia/Karachi seed completion in six separate processes, all exit 0. Existing domain tests already cover material DST, interval, money, event and concurrency cases, so those tests were not duplicated. No exhaustive historical-timezone or terminal-width claim.
+
+All six PlantUML sources pass renderer validation and produce SVG/PNG after correcting the lifecycle note syntax and overview layout. Fresh-extraction evidence and actual package contents are in SESSION_HISTORY.md. Build evidence is summarized in rubric-evidence.md; generated reports remain under target and are not submitted.
+
+
+## S6.1 architecture and regression evidence
+
+The retained 264 tests plus three new ArchitectureTest invocations total 267. The five architecture checks cover bytecode layer boundaries, static fields, exact-package graph acyclicity, cycle-detector regression cases, and declared imports (including unused imports). Every compiled production class must appear in jdeps output; no project-package exclusions exist. Same-package references are not package cycles and JDK packages are external leaves. Reports are target/architecture-jdeps.txt and target/architecture-packages.txt. Direct, indirect and disconnected cycles must fail; a diamond and same-package references pass. The original behavioral/concurrency assertions are unchanged except for relocated imports. See S6-AUDIT.md and SESSION_HISTORY.md for actual command outcomes, including the intermediate failing import check and final successful run.

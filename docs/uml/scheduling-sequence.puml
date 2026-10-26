@@ -1,0 +1,45 @@
+@startuml
+title Implemented S3-S4 - atomic scheduling and immutable replacements
+actor "Application caller / test" as Caller
+participant "AppointmentRepository\nInMemoryAppointmentRepository" as Repo
+participant "original : Appointment" as Original
+participant "AppointmentState" as State
+participant "ReservationRules" as Rules
+participant "AvailabilityStrategy" as Policy
+Caller -> Repo : reserve(candidate, strategy) / reschedule(id, start, strategy)
+critical instance-owned ReentrantLock
+  Repo -> Repo : reject nested writes; read latest values
+  Repo -> Repo : capture Clock instant into fixed DomainTime
+  alt reserve
+    Repo -> Repo : reject duplicate ID / non-Pending / catalog mismatch
+  else reschedule
+    Repo -> Original : reschedule(newStart, time)
+    Original -> State : requireRescheduling(originalSlot, now)
+    State --> Original : eligible or exception
+    Original -> Original : validate proposed slot; copy spec, retain State/subtype
+    Original --> Repo : detached replacement
+    Repo -> Repo : exclude only original ID from immutable schedule
+  end
+  Repo -> Rules : validate(candidate, strategy, schedule, time)
+  Rules -> Rules : intrinsic spec validation; raw interval conflict check
+  Rules -> Policy : preparationBuffer(provider)
+  Policy --> Rules : zero / configured Duration
+  Rules -> Rules : validate buffer and effective working hours/conflicts
+  alt any failure
+    Rules --> Repo : exception
+    Repo --> Caller : failure; original map unchanged
+  else accepted
+    Rules --> Repo : immutable Reservation(appointment, buffer)
+    Repo -> Repo : commit reservation + revision + append event
+    Repo --> Caller : immutable appointment
+  end
+end
+note over Repo
+finally unlocks on success or failure.
+find/history/reservations use the same lock and immutable values.
+transition delegates finite command to latest Appointment/State,
+then replaces reservation preserving buffer under the same lock.
+S4 records events/revisions under this lock.
+Dispatcher delivers outside it; see booking sequence.
+end note
+@enduml

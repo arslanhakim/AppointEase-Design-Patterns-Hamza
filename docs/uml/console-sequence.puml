@@ -1,0 +1,38 @@
+@startuml
+actor User
+participant Main
+participant DemoSeed
+participant ConsoleApplication
+participant ConsoleInput
+participant BookingFacade
+participant AppointmentAssembler
+participant InMemoryAppointmentRepository
+participant CommittedEventDispatcher
+participant AppointmentEventPublisher
+participant ExternalCalendarAdapter
+Main -> DemoSeed : create(runtime Clock, zone)
+Main -> BookingFacade : wire one repository/dispatcher/creators
+Main -> DemoSeed : populate(facade)
+DemoSeed -> BookingFacade : book + confirm previous weekday
+DemoSeed -> DemoSeed : permanently delegate clock to runtime
+Main -> ConsoleApplication : run()
+User -> ConsoleInput : selections, date/time, options
+ConsoleApplication -> BookingFacade : available(request) [advisory]
+BookingFacade -> AppointmentAssembler : assemble via Builder/creators
+ConsoleApplication -> User : review quote, mode and resolved offset
+User -> ConsoleInput : confirm y
+ConsoleApplication -> BookingFacade : book(command UUID, request)
+BookingFacade -> CommittedEventDispatcher : execute
+CommittedEventDispatcher -> InMemoryAppointmentRepository : atomic reserve / event append
+InMemoryAppointmentRepository -> InMemoryAppointmentRepository : hard rules + Strategy
+CommittedEventDispatcher -> AppointmentEventPublisher : publish after store unlock
+AppointmentEventPublisher -> AppointmentEventPublisher : notification + audit observers
+CommittedEventDispatcher -> ExternalCalendarAdapter : synchronize simulated mirror
+BookingFacade --> ConsoleApplication : BookingResult + delivery warnings
+ConsoleApplication -> User : ID, shortcut, fees, PENDING
+note over ConsoleApplication, BookingFacade
+Confirm, reschedule, cancel and complete use the same facade.
+State and repository enforce all lifecycle/scheduling rules.
+EOF unwinds pending input without writing.
+end note
+@enduml

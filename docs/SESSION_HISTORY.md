@@ -1,0 +1,334 @@
+# AppointEase session history
+
+Append dated records in chronological order. Preserve prior outcomes; add a correction if evidence changes. Keep current status in [PROJECT_MEMORY.md](../PROJECT_MEMORY.md). S0/S1 entries below were reconstructed from the existing source, conversation and [rubric evidence](rubric-evidence.md); the handoff entry records the fresh verification separately.
+
+## 2026-10-26 — S0: architecture and project foundation
+
+**Scope/completion:** Created the Java 21/Maven welcome application and design baseline. The workspace originally contained only Git metadata; no project conflicts were reported. No booking logic or patterns were implemented in S0.
+
+**Files completed:**
+
+- Root: pom.xml, README.md, AGENTS.md, .gitignore.
+- Java: src/main/java/com/appointease/Main.java; src/test/java/com/appointease/MainSmokeTest.java.
+- Documentation: docs/requirements.md, architecture.md, design-pattern-matrix.md, implementation-plan.md, testing-strategy.md, rubric-evidence.md.
+- UML: docs/uml/overview.puml and booking-sequence.puml.
+
+**Significant decisions:** Java compiler release 21; Jupiter 5.13.4; plugins clean 3.4.1, resources 3.3.1, compiler 3.14.1, Surefire 3.5.4, jar 3.4.2. Domain inward dependency rules, one future composition root, constructor injection, injectable Clock, Europe/Vilnius default zone, explicit DST resolution, EUR rounding, half-open intervals. Planned atomic repository check/write, immutable replacement on success, completed occupancy retention, ordered post-commit events and isolated observer/calendar failures. All nine patterns received distinct responsibilities, alternatives and planned tests; S1–S6 acceptance gates were documented.
+
+**Historical verification:** Temurin JDK 21.0.12.1 and Maven 3.9.16. Initial `mvn clean verify` failed before compilation because sandbox networking denied Maven Central access. Approved retry exited 0 with BUILD SUCCESS and 1 passing smoke test, no failures/errors/skips. Runnable jar printed `Welcome to AppointEase!`, actual exit 0.
+
+**Outstanding at close:** All domain and booking functionality remained planned. PlantUML was unavailable, so diagrams were source-reviewed only. Git warned about an inaccessible user-level ignore file. Files remained untracked; no commit was made. S1 required explicit authorization.
+
+## 2026-10-26 — S1: domain foundation and State
+
+**Scope/completion:** S1 was explicitly authorized, implemented, tested and subsequently approved by the user. The console entry point remained welcome-only. Exactly one GoF pattern, State, was implemented.
+
+**Files created:** Paths below are relative to src/main/java/com/appointease/.
+
+- domain/model/: Appointment.java, AppointmentId.java, AppointmentKind.java, AppointmentMode.java, AppointmentStatus.java, BookingOptions.java, Customer.java, CustomerId.java, Money.java, ProviderCategory.java, ProviderId.java, Service.java, ServiceId.java, ServiceProvider.java, TimeSlot.java, Validation.java, WorkingPeriod.java.
+- domain/state/: AppointmentState.java, PendingState.java, ConfirmedState.java, CompletedState.java, CancelledState.java.
+- domain/time/DomainTime.java; domain/exception/DomainValidationException.java and InvalidTransitionException.java.
+- Tests under src/test/java/com/appointease/domain/: DomainFixtures.java, DomainModelTest.java, TimeAndMoneyTest.java, AppointmentTest.java, AppointmentStateTest.java.
+- docs/uml/lifecycle-sequence.puml.
+
+**Files updated:** AGENTS.md, README.md; docs/requirements.md, architecture.md, design-pattern-matrix.md, implementation-plan.md, testing-strategy.md, rubric-evidence.md; docs/uml/overview.puml and booking-sequence.puml. POM, Main and original smoke test were unchanged.
+
+**Significant decisions:** Typed nonblank IDs; defensive immutable provider collections; positive service duration and service-derived appointment end; supported service/mode and working-hour checks; half-open overlap calculation; EUR scale 2/HALF_UP with negativity checked before rounding. DomainTime resolves gaps/overlaps explicitly and uses injected Clock. Appointment is a final immutable aggregate with fully validated direct construction pending S2. Lifecycle operations delegate to polymorphic states and return immutable replacements; no production status switch. Terminal states reject every operation. Confirmation/cancellation require future start; completion requires end reached. Rescheduling validates a proposal only, preserves the original, and rejects a changed business zone. Global uniqueness/reservation was deliberately deferred.
+
+**Historical verification:** First clean build passed 118 tests. After adding the business-zone preservation guard/test, final `mvn clean verify` exited 0 with **119 passed, 0 failures, 0 errors, 0 skipped**. Counts: DomainModelTest 61, TimeAndMoneyTest 18, AppointmentTest 13, AppointmentStateTest 26, MainSmokeTest 1. All 16 state/operation pairs and exact time boundaries were covered with fixed clocks. Jar welcome run exited 0. Source review found only JDK/domain imports, no production switches and no direct system-time calls.
+
+**Pattern status at close:** State complete; Factory Method, Abstract Factory, Builder, Decorator planned S2; Strategy planned S3; Adapter, Facade, Observer planned S4. The remaining eight patterns were not implemented.
+
+**Outstanding at close:** S2 must migrate direct construction to validated specs/creators/subtypes and paired mode families without weakening S1 invariants. No repository, strategy, atomic reservation/reschedule, event/revision mechanism, notification/calendar service, deterministic catalog or menu exists. AppointmentEvent is deferred to S4. PlantUML rendering and automated architecture checks remain pending. Existing files were untracked; no commits made. S2 was not authorized.
+
+## 2026-10-26 — S1 handoff and permanent session memory
+
+**Authorization:** Documentation/handoff and verification only. The user approved S1, requested permanent memory, then asked to resume after a model-capacity interruption. Inspection on resumption found neither memory file present; no partial handoff content needed merging.
+
+**Files completed:** Created PROJECT_MEMORY.md and docs/SESSION_HISTORY.md; updated AGENTS.md with permanent start/resume/close rules. No Java, test, POM or S2 implementation changes.
+
+**Review:** Read AGENTS.md, Git status, source inventory, Appointment, all State classes, DomainTime, Money, Main, State tests and POM alongside architecture/pattern/slice/evidence documents. Source supports one implemented State pattern and eight planned patterns. Git lists existing project files as untracked and no tracked paths. The fresh build below confirms the historical 119-test claim.
+
+**Fresh verification (completed 17:17:47 +05:00):**
+
+| Command/check | Actual result |
+| --- | --- |
+| `java -version` | Exit 0; Temurin OpenJDK 21.0.12.1+1-LTS |
+| `mvn -version` | Exit 0; Maven 3.9.16 using Java 21 |
+| `mvn clean verify` | Exit 0, BUILD SUCCESS; compiler release 21; 119 tests, 0 failures, 0 errors, 0 skipped |
+| Surefire reports in target/surefire-reports/ | DomainModelTest 61, TimeAndMoneyTest 18, AppointmentTest 13, AppointmentStateTest 26, MainSmokeTest 1; parameterized invocations included |
+| `java -jar target/appointease-0.1.0-SNAPSHOT.jar` | Actual exit 0; printed `Welcome to AppointEase!` |
+
+The fresh verification required no code changes and confirmed the S1 baseline. Test reports are generated artifacts and remain ignored by Git.
+
+**Handoff boundary:** S0/S1 complete; no new development slice authorized. A fresh S2 session can resume from memory, source and tests after explicit authorization. Planned S2 covers Factory Method, Abstract Factory, Builder and Decorator, with construction-fixture migration and preserved immutable State behavior. Never infer authorization from the slice roadmap.
+
+**Outstanding:** No build/test blocker remains. PlantUML rendering remains unverified; the Git user-ignore warning persists. No commit authorized or made. The capacity interruption is user-reported; it is not evidence of a project/build failure.
+
+## 2026-10-26 - S2: creational patterns and Decorator
+
+**Authorization:** User explicitly authorized S2 (Factory Method, Abstract Factory, Builder, Decorator), preservation of S1 and mandatory handoff. This supersedes the earlier handoff-only boundary. S3 remains unauthorized. No commits made.
+
+**Inspection:** Read AGENTS/memory/latest history, requirements, architecture, matrix, slice plan, testing/evidence/UML; inspected source, tests and Git. Existing project files were all untracked, and user-ignore permission warning remained. No existing files discarded. Initial edit script could not run because Python was unavailable; it made no changes. Node was used for local file edits.
+
+**Production files added** (relative to src/main/java/com/appointease/domain/):
+- creation/: AppointmentBuilder.java, AppointmentCreator.java, ConsultationAppointmentCreator.java, ServiceAppointmentCreator.java.
+- mode/: AppointmentModeFactory.java, OnlineModeFactory.java, InPersonModeFactory.java, MeetingDetails.java, ParticipationInstructions.java, AppointmentModeDetails.java. Concrete immutable family records are nested in the two factories.
+- addon/: AppointmentService.java, BaseAppointmentService.java, AppointmentServiceDecorator.java, PriorityBookingDecorator.java, ReminderServiceDecorator.java, BookingEnhancements.java.
+- model/: ValidatedAppointmentSpec.java, AppointmentRules.java, ConsultationAppointment.java, ServiceAppointment.java.
+
+**Production files changed:** model/Appointment.java now sealed abstract with subtype-preserving immutable lifecycle copies; model/Validation.java exposes shared validation helpers; model/BookingOptions.java comment updated. Main, POM, State classes, time and monetary behavior unchanged.
+
+**Tests:** Added domain/CreationPatternsTest.java (23 invocations) and domain/DecoratorTest.java (14). Migrated construction calls in DomainFixtures.java, AppointmentTest.java, DomainModelTest.java and TimeAndMoneyTest.java; retained all original assertions and 119 test invocations. AppointmentStateTest behavior unchanged. Coverage includes both kinds x both modes, override dispatch and pre-factory rejection, required fields, incompatible kinds/families/session identities, exact slot duration, quote/base-fee validation, both decorator orders, duplicates, Money precision, invalid fees/delegates, preserved immutable appointment identity/slot/provider/lifecycle/subtype, and unchanged hard constraints.
+
+**Decisions:** Fully validating public ValidatedAppointmentSpec in domain.model refines the planned restricted-constructor API and avoids model-to-creation orchestration dependency; subtype constructors accept validated specs and check kind. Shared AppointmentRules prevents duplicated creation/reschedule rules. Mode family identity belongs to each immutable factory instance; sealed product interfaces prevent mutable implementations. Builder accepts start or explicit slot (last setter wins), delegates quote(Service), validates then calls Factory Method. No separate BookingContext needed. BaseAppointmentService can import an existing fee snapshot without inventing behavior. Priority/reminder defaults EUR 10.00/2.00, with injectable Money; additive fees normalize individually, instructions follow wrapper order. Reminder/priority instructions are retained, not sent or executed as scheduling policy. Point-in-time specs are candidates, not reservations.
+
+**Actual verification:**
+
+| Command/check | Result |
+| --- | --- |
+| java -version | Exit 0; Temurin OpenJDK 21.0.12.1+1-LTS |
+| mvn -version | Exit 0; Maven 3.9.16 using Java 21 |
+| First mvn clean verify after construction migration | Exit 0, BUILD SUCCESS; all original 119 passed |
+| Final mvn clean verify, completed 17:42:36 +05:00 | Exit 0, BUILD SUCCESS; 156 passed, 0 failures, 0 errors, 0 skipped |
+| java -jar target/appointease-0.1.0-SNAPSHOT.jar | Exit 0; Welcome to AppointEase! |
+| Domain source/import review | Only JDK/domain imports; no production construction/lifecycle switch, outer-layer dependency or system-time calls |
+| Git review | Existing project remains untracked; diff --check exit 0 cannot cover untracked files; no staging/commit |
+
+Surefire totals: AppointmentStateTest 26, AppointmentTest 13, CreationPatternsTest 23, DecoratorTest 14, DomainModelTest 61, TimeAndMoneyTest 18, MainSmokeTest 1. Compiler processed 46 production and 8 test sources. Reports remain ignored under target/surefire-reports/.
+
+**Documentation:** Updated AGENTS.md, PROJECT_MEMORY.md, README.md, requirements.md, architecture.md, design-pattern-matrix.md, implementation-plan.md, testing-strategy.md, rubric-evidence.md, overview.puml, lifecycle-sequence.puml, booking-sequence.puml; added creation-sequence.puml and this history entry. Historical S0/S1 results are retained.
+
+**Status/boundary:** 5/9 implemented: Factory Method, Abstract Factory, Builder, Decorator, State. Strategy planned S3; Adapter/Facade/Observer planned S4. No repository, booking persistence, strategy, calendar, events, notification delivery or menu added.
+
+**Blockers/debt:** No implementation/build failure outstanding. PlantUML rendering remains unverified; source diagrams reviewed. Automated architecture checks remain planned. Spec validation can age after creation; future atomic repository must revalidate current time and hard rules under lock. Instruction strings are snapshots, not a delivery protocol. Sealed family extension requires source changes. Inaccessible Git user-ignore warning persists.
+
+**Proposed next slice (not authorized):** S3 Strategy plus unconditional hard scheduling rules, application repository contracts and thread-safe in-memory atomic commands. Test races, duplicates, adjacency/buffers, cancelled/completed occupancy and failure-preserving reschedule. Leave Facade/Observer/Adapter and event delivery to S4; menu to S5. Stop after S2.
+
+Final handoff review: scanned all 45 domain source files for imports outside JDK/domain and production switches/system-clock calls; none found. Checked source/document trailing whitespace (0 findings) and UML delimiters; this does not constitute renderer validation. No production changes followed the successful 156-test verification.
+
+## 2026-10-26 - S3: Strategy, scheduling and atomic reservations
+
+**Authorization:** User explicitly authorized S3 in this new coding session: Strategy, hard rules, application repository contracts, thread-safe in-memory atomic commands, tests and documentation handoff. This supersedes the S2 stop boundary. Stop after S3; S4 requires a new explicit authorization. No commits requested or made.
+
+**Initial inspection:** Read AGENTS.md, memory, latest history, requirements, architecture, pattern matrix, plan, testing/evidence and relevant UML. Inspected actual aggregate/spec/creator/state/time/interval/provider APIs, test fixtures, POM and Git. S2 source and its 156-test claim were confirmed by retained passing tests. All project files were already untracked; preserved them. Git user-ignore permission warning remains. Main/POM and all pre-existing tests were left unchanged.
+
+**New production files** (relative to src/main/java/com/appointease/):
+- domain/scheduling/AvailabilityStrategy.java, StandardAvailabilityStrategy.java, PreparationBufferAvailabilityStrategy.java, Reservation.java, ReservationRules.java, SlotUnavailableException.java.
+- application/port/AppointmentRepository.java, AppointmentTransition.java, RepositoryException.java.
+- infrastructure/memory/InMemoryAppointmentRepository.java.
+
+**Changed production files:** domain/model/Appointment.java, ConsultationAppointment.java, ServiceAppointment.java (detached subtype/State-preserving reschedule replacement); AppointmentRules.java (extract shared working-hour containment without duplicating future checks).
+
+**Tests:** Added src/test/java/com/appointease/domain/SchedulingTest.java, 41 invocations. Retained all 156 existing tests unchanged. New coverage includes both policies/configuration/immutable snapshots, boundary overlaps including containment, hours, stale time, single clock capture, catalogs/defensive copies, invalid service/duration/zone, duplicate/missing IDs, pending-only insertion, terminal history, immutable sorted reads, cancelled buffer release, failed commands, both creator kinds/families/decorators/State integrations and six latch-coordinated races. Race outcomes assert one conflicting winner, independent providers, duplicate ID protection, reschedule rollback, no lost confirm/reschedule update; bounded futures and guaranteed executor cleanup, no sleeps.
+
+**Architecture choices:** One application repository port combines lookup/history/atomic commands without public save. Constructor snapshots customer/provider/service catalogs; reserve requires exact value matches so forged provider hours or service duration cannot bypass catalog authority. IDs remain caller-supplied and atomically unique, including cancelled records. Domain ReservationRules reuses fully validating S2 spec and shared working-hours checks. Strategy returns preparation Duration via polymorphism: standard zero, buffered provider configuration or explicit override. This refines the conceptual schedule-assessing strategy while keeping hard overlap/rule enforcement unconditional. Store immutable buffer snapshots, not strategy objects. Effective occupancy is [start-buffer,end), must fit hours; preparation may begin before now, appointment must be future. Completed blocks, cancelled releases.
+
+One instance ReentrantLock protects all reads and full validation/replacement transactions. Capture Clock once under lock into fixed DomainTime. Build detached replacements and put only after success; no index synchronization issue because only one appointment map is maintained. Reschedule excludes only self and changes policy on successful explicit request; retains ID/subtype/State/family/add-ons/zone and original slot on failure. Finite transition commands delegate to existing State, preserving buffer. Nested writes from custom strategies are rejected to prevent reentrant snapshot invalidation. History is current appointment snapshots in start-then-ID order, not event history. No revision/event/queue/Facade/Observer/calendar implementation (Facade is planned S4).
+
+**Commands/results:** java -version exit 0 (Temurin 21.0.12.1+1-LTS); mvn -version exit 0 (3.9.16). Initial mvn clean verify at 19:43:03 +05:00 exit 0, 193 tests, no failures/errors/skips. Review added four invocations for containment, defensive catalogs and single clock capture; final mvn clean verify at 19:49:42 +05:00 exit 0, BUILD SUCCESS, **197 tests, 0 failures/errors/skips**. Final class totals: SchedulingTest 41, DomainModelTest 61, TimeAndMoneyTest 18, AppointmentTest 13, AppointmentStateTest 26, CreationPatternsTest 23, DecoratorTest 14, MainSmokeTest 1. Explicit java -jar target/appointease-0.1.0-SNAPSHOT.jar exit 0, exact welcome output. No Java/test changes after that build. One memory-file replacement patch was rejected before mutation; subsequent direct write succeeded, no project work lost.
+
+**Documentation completed:** AGENTS.md, PROJECT_MEMORY.md, README.md, docs/requirements.md, architecture.md, design-pattern-matrix.md, implementation-plan.md, testing-strategy.md, rubric-evidence.md and this appended history. Updated docs/uml/overview.puml, lifecycle-sequence.puml, booking-sequence.puml; added scheduling-sequence.puml. The full booking sequence explicitly remains planned S4 orchestration; scheduling sequence describes implemented S3 behavior. No renderer validation claimed.
+
+**Review/limitations:** Source review found inward domain/application imports; inspected all storage entrypoints and lock scope, no public save/check-write bypass, no mutable global state or static lock, no accidental changes to prior pattern implementations beyond immutable reschedule support. Tests demonstrate concurrency outcomes, not exhaustive interleaving exploration. Winner order unspecified, contents/history deterministically ordered. Whole-store lock and linear scan suit academic scale, not a throughput claim. Storage/catalogs are process-local; no dynamic catalog updates, historical import or durability. Custom strategies must be quick/pure and not wait on another repository command. Completed occupancy test uses an earlier fixed validation time to separate it from the independent future-only rule. PlantUML rendering and automated architecture tests remain deferred. No build blocker.
+
+**Pattern status and next boundary:** 6/9 implemented: Factory Method, Abstract Factory, Builder, Decorator, State, Strategy. Proposed S4 (not authorized): BookingFacade; immutable events/revisions atomically committed with repository updates; ordered synchronous dispatcher, Observer listeners and isolated failure reporting; CalendarPort/Adapter to incompatible simulated client with precise timestamp/error mapping and idempotency. Preserve S3 atomic semantics. No console menus/seed composition until S5, no real external services, background workers or databases. Stop after S3.
+
+Final handoff check: scanned 51 domain and 3 application source files for forbidden imports (0 findings), all source/docs for trailing whitespace (0 findings), and UML start/end delimiters (valid; not renderer validation). Git diff --check exited 0 but files remain untracked, so the separate source scan supplies whitespace evidence. Final Git status retained the existing untracked project structure and user-ignore warning. Documentation-only corrections followed the final passing build.
+
+## 2026-10-26 - S4: Adapter, Facade, Observer and integrated booking
+
+**Authorization:** User explicitly authorized S4, all-nine-pattern integration, tests and mandatory handoff. Supersedes the S3 stop boundary. Stop after S4; S5 requires explicit authorization. No console menus, seeds, live services, frameworks, commits or AI attribution added.
+
+**Inspection:** Read AGENTS/memory/latest history, requirements/architecture/pattern matrix/plan/testing/evidence/UML; inspected actual Java creation/family/add-on/State/time/scheduling/repository APIs and tests. Existing repository had no event queue or revisions, confirming S3 handoff. All files were already untracked and preserved; Git user-ignore permission warning remains. No staging/commit.
+
+**Production files added** (under src/main/java/com/appointease/):
+- domain/event/AppointmentEvent.java.
+- application/BookingFacade.java, AppointmentAssembler.java, BookingRequest.java, BookingResult.java.
+- application/port/CalendarPort.java, CalendarSyncException.java.
+- application/event/AppointmentListener.java, AppointmentEventPublisher.java, CommittedEventDispatcher.java, DeliveryFailure.java.
+- infrastructure/calendar/ExternalCalendarAdapter.java, SimulatedExternalCalendarClient.java, LegacyCalendarException.java.
+- infrastructure/notification/NotificationListener.java, AuditListener.java.
+
+**Production files modified:** application/port/AppointmentRepository.java (catalog reads and immutable event log); infrastructure/memory/InMemoryAppointmentRepository.java (catalog browsing, revision map/global event log and atomic commit helper). Existing domain production classes, Main and POM unchanged. No repository recreation or discarded work.
+
+**Tests added:** src/test/java/com/appointease/domain/BookingIntegrationTest.java (25 invocations) and CalendarObserverTest.java (14). All original 197 tests unchanged. Tests cover all-nine-pattern full lifecycle, catalog/availability, both service mode families, immutable subtype/family/fee preservation, cancellation/reuse, failures/no events, revision chains, exact time/zone/operation/revision translation, numeric failure mapping with causes, invalid legacy input, stale revision tombstones, subscription order/unsubscribe/snapshot semantics, deduplication/reentrancy, post-lock callbacks and warning isolation. Five new bounded latch/future races cover conflicting/disjoint bookings, confirm/reschedule, cancel/reschedule and same-command retries across shared facades. Six S3 races retained. No sleeps/network.
+
+**Decisions and actual guarantees:** Existing S3 atomic commands retained and extended with one commit helper. Event/revision/map update uses the same repository lock and captured Clock instant. AppointmentEvent carries immutable before/after snapshots, per-appointment revision and global sequence, with stable UUID-namespace/sequence event ID. Failed operations append nothing. Append-only log plus dispatcher cursor refines planned destructive FIFO queue; no contradictory S3 queue existed. No caller may overwrite stored snapshots; commands read latest state. State remains polymorphic; finite command-to-event/legacy-code mapping switches do not implement lifecycle rules.
+
+Facade delegates construction to AppointmentAssembler using existing Builder/creators/family factories/decorator quotes; repository always revalidates Strategy/hard rules atomically. Advisory available(request) is local only. One shared CommittedEventDispatcher per repository serializes facade operations and post-commit delivery. Direct repository writes can be drained explicitly or on a subsequent successful facade call. Publisher delivers subscriber snapshots in registration order, deduplicates IDs and isolates RuntimeExceptions; later listeners/calendar still run. Callbacks run outside repository lock. Reentrant facade/publication rejected; callbacks must not wait for command threads. Fatal JVM Errors are not recoverable delivery exceptions.
+
+Successful caller-supplied command-ID receipts return the original result on retry, including original warning/revision snapshots. Reuse with different input rejects; requests compare collaborators by their existing equality, so retain same request/immutable collaborator instances for retries. Failed commands do not consume keys; new keys mean new operations. No distributed exactly-once or crash durability claimed.
+
+Calendar policy: post-commit mirror only; external conflict/unavailability/invalid timestamps produce typed warnings and preserve local committed capacity. Adapter translates event types to primitive operation codes, exact epoch milliseconds, explicit zone, rN revision and stable event key. 400/409/503/unknown map to typed reasons with cause. Extra event-key legacy argument enables idempotency. Fake conflict keys/error codes are deterministic; successful event keys deduplicate, stale revisions reject, DELETE retains an inactive tombstone. No live calendar/notification calls.
+
+**Commands and outcomes:** java -version exit 0 (Temurin 21.0.12.1+1-LTS); mvn -version exit 0 (3.9.16). Initial production-integration mvn clean verify at 20:25:38 +05:00 exit 0, original 197 passing. Expanded suite at 20:28:20 exit 1: 233 tests, 1 failure, 0 errors/skips. This was a test setup error: duplicate appointment-ID assertion accidentally reused a successful command ID with different collaborator instances, correctly triggering the input-reuse guard. Corrected it to a distinct command ID; added publication-reentrancy, DST conversion and terminal completion coverage. Final mvn clean verify at 20:29:46 exit 0, BUILD SUCCESS: **236 tests, 0 failures/errors/skips**. Surefire XML totals independently checked. Jar run exit 0, exact Welcome to AppointEase! Repeated standalone Java/Maven/jar checks also exited 0. One combined patch was rejected for duplicate target before mutation and reapplied successfully; no partial edits lost.
+
+Final counts: DomainModelTest 61, TimeAndMoneyTest 18, AppointmentTest 13, AppointmentStateTest 26, CreationPatternsTest 23, DecoratorTest 14, SchedulingTest 41, MainSmokeTest 1, BookingIntegrationTest 25, CalendarObserverTest 14. 72 production / 11 test sources compiled. No Java/test edits after final passing build.
+
+**Handoff files:** Updated AGENTS.md, PROJECT_MEMORY.md, README.md; docs/requirements.md, architecture.md, design-pattern-matrix.md, implementation-plan.md, testing-strategy.md, rubric-evidence.md and this appended history. Updated UML overview, booking sequence, lifecycle sequence and scheduling sequence. Architecture documents actual log/cursor, shared dispatcher, retry equality and calendar warning policies. Source dependency scan found 0 forbidden domain/application imports. Lock/callback paths reviewed. UML source only; no renderer validation. Historical verification retained rather than overwritten.
+
+**Limits/readiness:** All nine patterns executable and S4 complete. No outstanding build failure. In-memory logs, deduplication/receipt/failure sets are unbounded; storage nondurable, immutable catalogs, whole-store locking/linear scans and synchronous serialized facade delivery suit academic scale. Multiple independent dispatchers per repository unsupported; composition must share one. Automatic delivery retry, external-availability veto, crash recovery and throughput guarantees are not implemented. Permanent architecture tests/UML rendering remain deferred. Git ignore warning persists. Recommended S5 only when authorized: deterministic seed/demo, Main composition, injectable console streams/parsing/rendering, scripted lifecycle/bad-input/EOF tests. No S5 implementation begun.
+
+Final handoff check: all source/document files scanned separately because Git files remain untracked: 0 trailing-whitespace findings; all PlantUML files have one start/end pair (not rendering proof). Final Git status preserves existing untracked structure and user-ignore warning. Documentation-only handoff updates followed the final passing build; no production/test changes followed it.
+
+## 2026-10-26 - S5: console application, seed data and executed demonstration
+
+**Authorization/boundary:** User explicitly requested S5, superseding the old S4 stop condition. S5 complete; stop here. S6 final QA/submission remains unauthorized. No commit requested or made. All existing files were untracked at inspection and preserved; Git user-ignore permission warning persists.
+
+**Initial inspection:** Read AGENTS.md, PROJECT_MEMORY.md, latest history, architecture, pattern matrix, implementation plan, testing strategy and requirements. Inspected real facade/request/result/assembler APIs, domain models/modes/time/add-ons/exceptions, repository/event/observer/calendar wiring, fixtures/integration tests, Main/process smoke and POM. Fresh baseline verification confirmed all 236 S4 tests after a sandbox dependency-access failure and approved retry. Existing patterns were not inferred from reports alone.
+
+**Files created:**
+
+- src/main/java/com/appointease/presentation/ConsoleInput.java and ConsoleApplication.java.
+- src/main/java/com/appointease/infrastructure/seed/DemoCatalog.java and DemoSeed.java.
+- src/test/java/com/appointease/ConsoleApplicationTest.java.
+- scripts/demo.ps1 and docs/uml/console-sequence.puml.
+
+**Files modified:** Main.java; MainSmokeTest.java (interactive EOF expectations); README.md; AGENTS.md; PROJECT_MEMORY.md; docs/architecture.md, design-pattern-matrix.md, implementation-plan.md, testing-strategy.md, requirements.md, rubric-evidence.md, uml/overview.puml and this history. No domain/application/existing infrastructure adapter or POM changes. All 235 pre-existing domain/integration test invocations remain unchanged; original process smoke retained as one adapted invocation.
+
+**Implementation:** All eleven requested operations and exit; numbered/full-ID catalog choices; type-filtered services; strict local dates/times resolved via DomainTime with displayed offset; online/in-person family selections; priority/reminder decorator quotes; standard/provider-buffer policies; final booking and reschedule confirmation; complete receipt/fees/status/mode instructions; UUID appointment IDs and @1 etc. session shortcuts; sorted customer snapshots, event details, notification/audit tables. Expected parsing/domain/repository/slot/lifecycle errors return to menu. EOF unwinds any prompt without saving partial work; streams injected and output flushed. No terminal libraries or ANSI reliance.
+
+Main.create(InputStream, OutputStream, Clock, ZoneId) owns one real repository/dispatcher/publisher/calendar/observer composition; main only resolves configuration and runs it. Console talks to BookingFacade and injected read-only observer suppliers, never storage. Main wires creator map; request selections reuse existing factories/decorators/strategies and facade assembly. All nine pattern implementations remain intact.
+
+DemoCatalog supplies three customers and four providers/services with stable namespaced IDs, categories healthcare/tutoring/consulting/personal services, durations 30/60/45/30 minutes, EUR 40/25/60/20, weekdays 09:00-17:00 and optional 15-minute preparation. Both modes except salon in-person. DemoSeed creates exactly one previous-weekday 10:00 confirmed appointment (seed-ready-001) using legitimate book/confirm facade commands under an instance-local startup clock, then permanently delegates to runtime Clock before exposing the console. This refines the old fixed-date/one-customer plan and supports immediate completion without relaxing State rules or importing arbitrary state. There are no overlapping seed reservations and no fixed production appointment dates.
+
+**Commands and actual outcomes:**
+
+- java -version: exit 0, Temurin OpenJDK 21.0.12.1+1-LTS. mvn -version: exit 0, Maven 3.9.16 with Java 21.
+- Initial sandbox mvn clean verify: exit 1 at 23:25:52 +05:00, before compilation; Maven Central dependency access denied (getsockopt). Approved retry: exit 0 at 23:26:39, BUILD SUCCESS, original 236 tests, zero failures/errors/skips.
+- First expanded mvn clean verify: exit 0 at 23:30:05, 262 tests, zero failures/errors/skips. After extracting historical setup from Main into DemoSeed, final mvn clean verify: exit 0 at 23:31:46, BUILD SUCCESS, **262 tests, 0 failures, 0 errors, 0 skipped**. Compiled 76 production and 12 test sources. Surefire XML independently summed to these totals. No Java/test edits after this final build.
+- New ConsoleApplicationTest: 26 invocations through real Main composition, fixed Clock and byte-array streams; navigation, listings, workflow, both kinds/modes, fees, overlap/adjacency/buffer/reuse, confirmation/reschedule/cancel/complete, history, validation recovery, no-confirm/advisory writes, EOF at multiple stages, configured zone and independent compositions. No sleeps/external services.
+- scripts/demo.ps1 initial run: exit 1 before Java because Windows PowerShell's timezone database did not recognize Europe/Vilnius. Added FLE Standard Time fallback; rerun exit 0. It actually invoked java -jar target/appointease-0.1.0-SNAPSHOT.jar for workflow, empty EOF and mid-booking EOF; **all three child exits 0** with expected evidence assertions. Runtime is offline.
+- Script used 2026-10-27 (computed next weekday): online health 10:00 EUR 52.00 with both extras; duplicate-slot rejection; adjacent 10:30 booking; rejected buffered reschedule preserving 10:30; confirmed first booking, rescheduled to 11:30 buffered, cancelled and reused that slot; in-person salon EUR 20.00; completed elapsed seed; appointment, notification and audit histories. Four successful interactive bookings. Explicit exit plus both EOF paths show Goodbye. Full generated transcripts: target/demo-workflow.txt, target/demo-eof.txt, target/demo-partial-eof.txt.
+- Domain/application forbidden-import rg scans: no findings (rg exit 1 means no matches, not a failed application check). No permanent architecture test added. Git remains untracked with existing ignore warning; no commits.
+
+**Editing corrections:** An initial combined add/delete patch was rejected for duplicate Main target before any mutation and reapplied correctly. A documentation replacement script flattened single-pair arrays and temporarily replaced uppercase S in AGENTS/rubric text; the affected text was repaired and reread, preserving historical outcomes. No source or tests were affected. These editing errors are not reported as passing checks or product bugs.
+
+**Handoff/limits:** README contains build/run, timezone, complete catalog, menu use, lifecycle rules, shortcuts and repeatable demo instructions. Architecture and UML now show console/seed composition; UML source reviewed, not rendered. PROJECT_MEMORY is concise/current with links, actual outcomes and boundary. No known failing tested workflow or build blocker. Existing nondurable/unbounded process-local storage/logs and serialized delivery remain. Console supports exact-slot queries, not automatic slot discovery; invalid input restarts the operation; wide tables can wrap; English prompts only; notification records are simulated, not timed reminders. Exotic historical timezone changes and broad terminal compatibility are not comprehensively tested.
+
+**Recommended S6 only after authorization:** final requirements/pattern traceability audit, permanent architecture checks, UML rendering, broader terminal/timezone QA, regenerated demo evidence and submission packaging review. No S6 implementation or final submission started.
+
+## 2026-10-27 - S6: independent final audit and submission preparation
+
+**Authorization and scope:** User explicitly authorized S6 final verification/documentation/packaging, superseding all old S5 stop conditions. Work began October 26 and crossed midnight in Asia/Karachi. S6 complete; stop here. No production Java, dependencies, features, commits or Moodle uploads changed. All preexisting repository files were untracked and preserved; user-level Git ignore warning persists.
+
+**Inspection and findings:** Read AGENTS.md, PROJECT_MEMORY.md, latest history, README, requirements, architecture, pattern matrix, testing strategy, rubric and implementation plan. Inspected actual source tree, creation/state/scheduling/assembler/facade/repository/dispatcher/observer/calendar/console/seed paths, tests and concurrency helpers, POM, demo and all six UML sources. Independently verified genuine behavioral participation of all nine patterns in the real lifecycle. No critical defect found. Qualifications: Builder is a fluent concrete variant without separate Director/abstract builder; product subtype differences are modest; Strategy varies preparation duration; calendar/notifications are simulated. No guaranteed mark.
+
+Architecture: compiled dependencies confirm inward, acyclic layer directions and no forbidden domain/application dependencies or presentation repository access. Actual package cycles exist inside domain (model/state/mode/addon) and application/event. This is explicitly disclosed as a literal package-level N02 shortfall; avoiding it would require unjustified restructuring in a final audit. No cyclic constructor injection or mutable global state found. Reviewed one-lock atomic reserve/reschedule/transition/revision/event path, immutable snapshots, post-lock listener/calendar delivery, RuntimeException isolation and callback/retry limitations. Invalid timezone prints a configuration error but exits 0; documented low-severity CLI limitation, not silently called successful configuration.
+
+**Created files:** src/test/java/com/appointease/ArchitectureTest.java (two tests, JDK jdeps plus static-field reflection); scripts/verify-console.ps1; scripts/package-submission.ps1; docs/S6-AUDIT.md; docs/demonstration-walkthrough.md; docs/evaluation-criteria-draft.md; SVG and PNG renders for all six UML sources; root AppointEase_DesignPatterns_Submission.zip (ignored local deliverable).
+
+**Updated files:** AGENTS.md, PROJECT_MEMORY.md, README.md, .gitignore; docs/requirements.md, architecture.md, design-pattern-matrix.md, testing-strategy.md, rubric-evidence.md, implementation-plan.md, SESSION_HISTORY.md; docs/uml/overview.puml, booking-sequence.puml, lifecycle-sequence.puml. Fixed stale planned/current-boundary claims, added user-supplied 100-point traceability and evidence draft, corrected unsupported UUID-collision retry and EventId descriptions. Historical outcomes remain intact under explicit historical headings. No existing Java tests changed; no production Java changed.
+
+**Actual verification:**
+
+- java -version and mvn -version each exit 0: Temurin OpenJDK 21.0.12.1+1-LTS, Maven 3.9.16 on Java 21.
+- Fresh baseline `mvn clean verify`: exit 0, October 26 23:55:02 +05:00, 262 tests, zero failures/errors/skips.
+- Final source `mvn clean verify`: exit 0, October 27 00:05:37 +05:00, BUILD SUCCESS, **264 tests, zero failures/errors/skips**. 76 production and 13 test source files compiled. Surefire XML independently summed to 264/0/0/0. Retained counts: DomainModelTest 61, TimeAndMoneyTest 18, AppointmentTest 13, AppointmentStateTest 26, CreationPatternsTest 23, DecoratorTest 14, SchedulingTest 41, BookingIntegrationTest 25, CalendarObserverTest 14, ConsoleApplicationTest 26, MainSmokeTest 1; new ArchitectureTest 2.
+- scripts/demo.ps1 executed packaged workflow and empty/mid-booking EOF: all three Java children exit 0, expected assertions pass. Four bookings, overlap rejection, adjacency, rejected buffered reschedule, successful buffered reschedule, cancellation/reuse, both modes/types, EUR fees, elapsed-seed completion and observer/history outputs. Script is also executed as a separate PowerShell process in the extraction verification below, exit 0.
+- `powershell -NoProfile -File scripts/verify-console.ps1`: script exit 0; six Java children (smoke, invalid menu/customer with recovery to service listing, empty EOF, mid-booking EOF, UTC completion, Asia/Karachi completion) all exit 0. No partial booking saved. Transcripts under target/qa-*.txt, excluded from package.
+- Quoted invalid-zone Java command prints expected error and exits 0, confirming diagnostic limitation. An initial unquoted PowerShell -D argument was parsed incorrectly and exited 1 with ClassNotFoundException; corrected quoting verified actual behavior. This was a command invocation error, not a product regression.
+- git diff --check exit 0. Since files are untracked, separate scan of 113 submission text files found zero trailing-whitespace issues. Targeted credential/private-key scan found no matches in source/docs/scripts/POM/README; archive allowlist excludes local secret/tool/build directories. This is not a comprehensive security certification.
+
+**UML:** No installed plantuml/dot command initially found. Standalone PlantUML 1.2024.8 download from Maven Central first failed in sandbox (exit 1); approved retry succeeded. Tool reports bundled/available Graphviz 2.44.1. Initial checkonly exit 1 and render exit 200 identified lifecycle-sequence.puml line 37: sequence note used invalid `note bottom of`. Changed to `note over`. Corrected stale no-console text and Builder quote ordering in booking sequence; actual Appointment spec field/indirect relationships and final status in overview. Visual inspection revealed initial overview PNG clipping at renderer size limit; disabled automatic dotted namespace nesting and bounded image dimensions, rerendered successfully. All six final sources pass syntax validation (exit 0), SVG/PNG rendering exits 0, all images visually inspected. SVG recommended for dense overview/wide booking sequence. Renderer and audit tooling are excluded from ZIP; application build does not depend on renderer.
+
+**Packaging and fresh extraction:** scripts/package-submission.ps1 creates root `AppointEase_DesignPatterns_Submission.zip` from explicit roots/extensions and required files. 125 entries: 76 production Java files, 13 test Java files, 18 UML files (six each PUML/SVG/PNG), 10 documentation Markdown files, three PowerShell scripts, and five root files (POM, README, AGENTS, PROJECT_MEMORY, .gitignore). It verifies required entries, excludes target/.git/IDE/log/temp/local-tool/secret paths, checks entry count and compares every archived entry with its source SHA-256. No binary JAR or renderer is shipped; source builds the runnable JAR.
+
+First extraction `.submission-check/first` was a new empty directory. `mvn clean verify` there exited 0 at 00:13:28 +05:00, 264 tests, zero failures/errors/skips. Extracted `powershell -NoProfile -File scripts/demo.ps1` and `powershell -NoProfile -File scripts/verify-console.ps1` both exited 0; all nine Java children exited 0 and assertions passed. Builds used this host's existing Maven cache; fresh extraction does not imply a clean cache, another JDK distribution or OS. Closing documentation changes are repackaged; production/test Java, POM and scripts remain unchanged from the verified extraction. Every final ZIP entry is checked against current source bytes.
+
+**Known limitations and manual tasks:** Intra-layer package cycles/N02 qualification, concrete fluent Builder variant, invalid-zone exit code 0, unbounded in-memory receipts/logs, serialized synchronous delivery, no durable retry, simulated reminders/calendar, exact-slot queries, English/wide tables and non-exhaustive historical timezone/terminal coverage remain explicit. No failing supported test/build or unresolved critical defect. Before October 30, user must confirm Moodle template/size/deadline timezone, add student/course identifiers/declaration, upload ZIP and any required evaluation form, open/verify attachment, perform final submission and save receipt. The completed evidence draft is docs/evaluation-criteria-draft.md. No upload or commit was authorized/performed. Stop after S6.
+
+
+## 2026-10-27 - S6.1: package dependency correction and release verification
+
+**Authorization:** Explicit user request for minimal cycle removal, architecture regression checks, behavior preservation, documentation/UML synchronization and regenerated submission. Stop after S6.1; no new features, dependencies, commits or Moodle upload. Fresh-session AGENTS/memory/latest history/audit/architecture/matrix/rubric/plan/testing/requirements/POM/source/tests/six UML/scripts/Git inspected. Existing files untracked, no tracked diff; preserved source with local .audit-tools/baseline snapshot. No unrelated work overwritten.
+
+**Baseline:** java -version and mvn -version exit 0 (Temurin 21.0.12.1, Maven 3.9.16). Sandbox mvn clean verify failed at 00:52:59 before compilation with getsockopt access denial (exit 1); approved retry completed 00:53:32 +05:00, exit 0, 264/0/0/0 tests/failures/errors/skips. Existing two architecture checks passed. jdeps class edges showed 18 packages, exactly four simple cycles in two cyclic components: domain model/state/mode/addon and application/event. Concrete class/import edges are recorded before refactoring in S6-AUDIT.md. These were real compile-time ownership cycles, not cyclic constructors or merely conceptual arrows.
+
+**Decisions:** Five aggregate-related classes (Appointment, ConsultationAppointment, ServiceAppointment, ValidatedAppointmentSpec, AppointmentRules) moved domain.model -> domain.appointment, preserving sealed/package-private construction relationships and lower shared model values. Command/receipt coordinator CommittedEventDispatcher moved application.event -> application; publisher/listener/failure contracts stay in event. Six FQCNs change; no method contracts or business logic changes, no wrappers/artificial interfaces. Migration preserves all nine patterns and full immutable identity/lifecycle/factory/decorator/strategy/repository/adapter/observer/facade semantics.
+
+**Architecture tests:** Retained compiled layer allowlist and mutable-static-field checks; added all-production exact-package cycle check, detector regression cases and source import guard. JDK jdeps -verbose:class -filter:none covers every compiled class, including nested classes. Sorted graph and active-path DFS check every connected component. Only within-package edges/JDK leaves omitted; no project exclusions. Synthetic direct/indirect/disconnected cycles fail and diamond/same-package cases pass. Reports target/architecture-jdeps.txt and architecture-packages.txt. Console changed to explicit facade/request/result imports after intermediate check rejected application wildcard; test was not weakened.
+
+**Actual verification:** Intermediate mvn clean verify 00:56:44 exit 1, 267 tests, 1 failure (new source import guard), zero errors/skips. Corrected import, final workspace mvn clean verify 00:57:23 exit 0, BUILD SUCCESS, **267/0/0/0**, independently summed from Surefire XML. Original 264 retained; three added architecture invocations. 76 production / 13 test files. All eleven existing coordinated concurrency scenarios pass. Local comparison proves all 88 production/non-architecture test and fixture bodies unchanged after stripping package/import declarations. POM unchanged. Independent graph enumeration now finds 19 packages, zero cycles. git diff --check exit 0 (untracked files require supplementary whitespace review).
+
+**Runtime:** powershell -NoProfile -File scripts/demo.ps1 and scripts/verify-console.ps1 exit 0; nine packaged Java child exits 0. Demonstration uses next Vilnius weekday 2026-10-27: four bookings, overlap/adjacency/buffer failure and preservation, successful reschedule, cancellation/reuse, confirmation/completion, both families/kinds/fees, notification/audit histories, explicit exit, empty and mid-operation EOF. Additional QA covers malformed input recovery, UTC/Karachi seed completion. Offline runtime unchanged.
+
+**UML/docs:** Read all six sources. Overview relocates aggregate and dispatcher, moves relationships after declarations to avoid implicit old-package ownership, and updates boundary. Five sequence sources are unchanged; a trial ASCII title did not fix the SVG metadata decoder and was reverted. All six checkonly/SVG/PNG renders exit 0; updated overview visually reviewed without clipping. All six PNG embedded sources match PUML; six SVGs match independent fresh renders byte-for-byte. SVG metadata decoding was unreliable and is not claimed as verification. Early validation helper needed stdout/stderr UTF-8 handling; failed SVG decoding comparisons were not called passing. A handoff generator syntax error was corrected before it wrote any files. Documentation updates preserve original historical S6 results under explicit historical headings and document N02 resolution. Packaging script now requires handoff docs, relocated entrypoints and every UML source/render.
+
+**Changed/current files:**
+
+- src/main/java/com/appointease/application/AppointmentAssembler.java
+- src/main/java/com/appointease/application/BookingFacade.java
+- src/main/java/com/appointease/application/BookingResult.java
+- src/main/java/com/appointease/application/CommittedEventDispatcher.java
+- src/main/java/com/appointease/application/port/AppointmentRepository.java
+- src/main/java/com/appointease/application/port/AppointmentTransition.java
+- src/main/java/com/appointease/domain/appointment/Appointment.java
+- src/main/java/com/appointease/domain/appointment/AppointmentRules.java
+- src/main/java/com/appointease/domain/appointment/ConsultationAppointment.java
+- src/main/java/com/appointease/domain/appointment/ServiceAppointment.java
+- src/main/java/com/appointease/domain/appointment/ValidatedAppointmentSpec.java
+- src/main/java/com/appointease/domain/creation/AppointmentBuilder.java
+- src/main/java/com/appointease/domain/creation/AppointmentCreator.java
+- src/main/java/com/appointease/domain/creation/ConsultationAppointmentCreator.java
+- src/main/java/com/appointease/domain/creation/ServiceAppointmentCreator.java
+- src/main/java/com/appointease/domain/event/AppointmentEvent.java
+- src/main/java/com/appointease/domain/scheduling/Reservation.java
+- src/main/java/com/appointease/domain/scheduling/ReservationRules.java
+- src/main/java/com/appointease/infrastructure/memory/InMemoryAppointmentRepository.java
+- src/main/java/com/appointease/presentation/ConsoleApplication.java
+- src/test/java/com/appointease/ArchitectureTest.java
+- src/test/java/com/appointease/domain/AppointmentStateTest.java
+- src/test/java/com/appointease/domain/AppointmentTest.java
+- src/test/java/com/appointease/domain/BookingIntegrationTest.java
+- src/test/java/com/appointease/domain/CreationPatternsTest.java
+- src/test/java/com/appointease/domain/DomainFixtures.java
+- src/test/java/com/appointease/domain/SchedulingTest.java
+- src/test/java/com/appointease/domain/TimeAndMoneyTest.java
+- docs/architecture.md
+- docs/demonstration-walkthrough.md
+- docs/design-pattern-matrix.md
+- docs/evaluation-criteria-draft.md
+- docs/implementation-plan.md
+- docs/requirements.md
+- docs/rubric-evidence.md
+- docs/S6-AUDIT.md
+- docs/testing-strategy.md
+- docs/uml/overview.png
+- docs/uml/overview.puml
+- docs/uml/overview.svg
+- scripts/package-submission.ps1
+- AGENTS.md
+- PROJECT_MEMORY.md
+- README.md
+
+Old locations of the six relocated Java files were removed by move. Unchanged pattern classes, source bodies, POM, demo and console QA scripts retained. Local tooling/snapshots excluded from ZIP.
+
+**Candidate release status:** Source and runtime verification complete. Handoff written before candidate ZIP creation. External-temp fresh extraction and final regeneration evidence will be appended below before the final archive is built. Do not treat this candidate as the completed final release until that gate passes.
+
+
+**S6.1 extraction and finalized handoff:** Candidate ZIP created only after workspace verification and candidate memory/history were written: 125 entries, SHA-256 CF25FC23A0CCAA74B1EB46C13CEDDED0007C9B4337570C8FE43E565787153E8D (candidate identity only, not the final ZIP). Extracted into new external temporary directory <external-temp>/AppointEase-S6.1/candidate, outside the repository. There, mvn clean verify completed 2026-10-27 01:05:21 +05:00, exit 0, BUILD SUCCESS, **267 tests, 0 failures/errors/skips**, independently summed from XML. All five architecture checks pass. Every extracted payload file matches workspace bytes. The initial sandbox console-script launches exited 1 due to temporary-directory access denial, before Java; approved combined retry ran both extracted scripts with exit 0 and all nine Java children exit 0, full workflow/EOF/QA assertions passing. Build uses the same Windows/JDK/Maven cache, not a fresh-cache or second-OS certification.
+
+Final untracked-file supplement: 113 submission text files, zero trailing whitespace; git diff --check exit 0. Inventory remains 125 (76 production Java, 13 test Java, 18 UML artifacts, 10 docs Markdown, 3 scripts, 5 root files). No target/.git/IDE/temp/audit tooling/secrets shipped; packaging compares all entries by SHA-256 and requires current handoff, relocated entrypoints and all six diagrams. No JAR shipped; extracted Maven build produces and runs it.
+
+This finalized memory/history/audit evidence is written BEFORE regenerating the final ZIP. Only these closing Markdown files change after candidate verification; production/test Java, POM, scripts and UML remain byte-identical to the verified extraction. Final release protocol immediately regenerates the ZIP, verifies its inventory/entry hashes, extracts again into <external-temp>/AppointEase-S6.1/final, and repeats mvn clean verify plus demo/console QA. The exact final ZIP size/hash and repeated-check outcomes are reported externally in the final response and local .audit-tools/final-release.json, so recording the final archive identity does not change the archive it identifies. No pre-execution result of that final repeat is fabricated here. If that gate fails, completion must not be claimed; repair, update evidence, regenerate and recheck.
+
+**Remaining limits/next boundary:** Four cycles resolved, no exclusions or unavoidable production package cycle remains. Nine patterns and all original behavioral/concurrency assertions preserved. Six FQCN migrations require downstream source imports/recompilation; no binary-compatibility facade is claimed. Existing academic/process-local/synchronous/simulated-integration/console/invalid-zone-exit limitations remain as documented. No blocker on verified payload. User must confirm Moodle requirements/deadline timezone, add identifiers/declaration, upload and verify final receipt; no upload or commit made. Stop after S6.1, await explicit authorization for additional work.
+
+
+## 2026-10-27 - GitHub publication and final local verification
+
+**Authorization:** User explicitly requested inspection, privacy/Git hygiene, private repository creation in the already authenticated GitHub account, fresh Maven/JAR verification, initial commit with exact message, main branch, push and remote verification. Supersedes prior no-commit/no-GitHub-publication boundary only for this task. No business logic, features, frontend development, Moodle upload, force-push or history replacement.
+
+**Initial state:** Read AGENTS.md, PROJECT_MEMORY.md, latest history, README, relevant architecture/pattern/academic docs, pom.xml and ignore rules. All 125 intended project files were untracked; unborn master, no commits/remotes/tracked files. Existing ignored S6.1 ZIP and local audit artifacts preserved. GitHub CLI 2.89.0 installed. Sandboxed gh auth status falsely reported an invalid credential; authorized outside-sandbox check succeeded using the keyring account arslanhakim. No token was requested or exposed. Initial requested-repository lookup reported nonexistent; created arslanhakim/AppointEase-Design-Patterns-Hamza as PRIVATE with the exact requested description and verified metadata. No preexisting remote content was modified.
+
+**Files prepared:** .gitignore expanded for Git metadata, target directories, IDE/editor state, local agent/audit/temp/extraction directories, logs, environment files, credentials/private keys and ZIPs. README retains JDK 21/Maven setup/build/run/demo instructions and adds a nine-pattern package map. AGENTS records narrow publication authorization. PROJECT_MEMORY and this history updated before commit. Historical host/user directory paths in PROJECT_MEMORY, S6-AUDIT, rubric-evidence and this history were replaced with repository-relative or external-temp references solely for privacy; original verification outcomes retained. No source/test/POM/UML/script behavior changed.
+
+**Privacy/inventory:** Explicit allowlist is .gitignore, AGENTS.md, PROJECT_MEMORY.md, README.md, pom.xml, src/, docs/, scripts/ (125 files). Checked credential/private-key/cloud-key/credential-URL/assigned-secret/personal-email/personal-path signatures without printing sensitive values; zero findings. Ignore probes confirm Git/build/IDE/audit/extracted/env/credentials/key/ZIP exclusions. This targeted scan is not an exhaustive security certification. Commit identity uses repository-local authenticated account login and GitHub no-reply address, leaving global Git identity unchanged. No AI attribution/co-author metadata.
+
+**Actual verification before commit:** java -version exit 0 (Temurin 21.0.12.1+1-LTS); mvn -version exit 0 (Maven 3.9.16). mvn clean verify completed 01:44:41 +05:00, exit 0, BUILD SUCCESS, **267 tests, 0 failures/errors/skips**. Five architecture checks pass; all nine patterns and original concurrency tests retained. powershell -NoProfile -File scripts/verify-console.ps1 exit 0; all six packaged-JAR processes exit 0 and assert welcome/goodbye, explicit exit, empty/mid-operation EOF, malformed-input recovery, UTC and Karachi completion. Business code unchanged.
+
+**Publication record prepared before initial commit:** URL https://github.com/arslanhakim/AppointEase-Design-Patterns-Hamza; visibility PRIVATE; intended branch main; exact message Initial release: AppointEase appointment booking system. Stage only the reviewed allowlist, check staged bytes/names and whitespace, create initial commit, add origin, push without force, then compare local HEAD, tracking ref, GitHub main and remote advertised main. The commit cannot contain its own SHA or a future push result; actual final SHA and push verification will be emitted externally after execution. If authentication/permissions fail, stop and provide recovery instructions without claiming publication. Git commands/state are authoritative on resume.
+
+**Artifact/boundary:** Existing verified S6.1 submission ZIP unchanged and excluded from Git; its archived docs precede this publication-specific privacy/handoff update. Do not confuse it with the new GitHub snapshot. No academic ZIP regeneration or Moodle upload requested. Stop after publishing/verifying; further development needs explicit authorization.

@@ -1,0 +1,44 @@
+@startuml
+title Implemented S1-S4 domain lifecycle — immutable State behavior
+actor "Domain caller / test" as Caller
+participant "pending : Appointment" as Original
+participant DomainTime as Time
+participant PendingState as Pending
+participant "confirmed : Appointment" as Confirmed
+participant ConfirmedState as State
+Caller -> Original : confirm(time)
+Original -> Time : now()
+Time --> Original : injected Clock instant
+Original -> Pending : confirm(slot, now)
+alt now < start
+  Pending --> Original : new ConfirmedState
+  Original --> Caller : new confirmed appointment of same subtype
+  note over Original, Confirmed
+    Original remains PENDING; caller retains returned value.
+    Mode family and enhancement snapshot are preserved.
+    Domain calls alone do not commit; repository persists replacements.
+S4 records revisions/events atomically, then delivers after unlock.
+  end note
+else now >= start
+  Pending --> Original : DomainValidationException
+  Original --> Caller : failure, original unchanged
+end
+Caller -> Confirmed : complete(time)
+Confirmed -> Time : now()
+Time --> Confirmed : injected Clock instant
+Confirmed -> State : complete(slot, now)
+alt now >= end
+  State --> Confirmed : new CompletedState
+  Confirmed --> Caller : new completed appointment of same subtype
+else now < end
+  State --> Confirmed : DomainValidationException
+  Confirmed --> Caller : failure, confirmed unchanged
+end
+note over Confirmed
+validateReschedule delegates eligibility to State,
+validates proposed slot, and returns TimeSlot only.
+S3 reschedule uses that proposal to create a same-State/subtype replacement.
+Repository commits after atomic availability checks; see scheduling sequence.
+COMPLETED/CANCELLED reject all lifecycle operations.
+end note
+@enduml

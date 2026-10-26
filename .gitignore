@@ -1,0 +1,51 @@
+# Maven
+target/
+*.log
+# Git metadata (Git also excludes its own metadata automatically)
+.git/
+# IntelliJ
+.idea/
+*.iml
+*.ipr
+*.iws
+# VS Code local workspace settings
+.vscode/
+*.code-workspace
+# Eclipse and local editor state
+.settings/
+.classpath
+.project
+.factorypath
+*.swp
+*.swo
+*~
+# Operating systems
+.DS_Store
+Thumbs.db
+# Local S6 audit tooling and extracted verification copies
+.audit-tools/
+/.submission-check/
+/.publication-check/
+/tmp/
+/temp/
+*.tmp
+*.bak
+*.zip
+# Local agent state
+.codex/
+.agents/
+# Environment, credentials and private keys
+.env
+.env.*
+*.env
+secrets/
+credentials/
+credentials.json
+credentials.xml
+*.credentials.json
+*.pem
+*.key
+*.p12
+*.pfx
+*.jks
+/settings.xml

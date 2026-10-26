@@ -1,0 +1,336 @@
+﻿@startuml
+title AppointEase - final S6.1 package correction, nine integrated GoF patterns
+skinparam packageStyle rectangle
+set namespaceSeparator none
+scale max 3600*3000
+package "com.appointease.domain.appointment" {
+  abstract class Appointment <<sealed immutable>> {
+    - state : AppointmentState
+    - spec : ValidatedAppointmentSpec
+    + confirm(time) : Appointment
+    + cancel(time) : Appointment
+    + complete(time) : Appointment
+    + validateReschedule(newStart, time) : TimeSlot
+    + reschedule(newStart, time) : Appointment
+    + status() : AppointmentStatus
+  }
+  class ValidatedAppointmentSpec <<immutable validated>>
+  class AppointmentRules
+  class ConsultationAppointment <<final immutable>>
+  class ServiceAppointment <<final immutable>>
+}
+package "com.appointease.domain.model" {
+  class Customer <<immutable record>> {
+    + id : CustomerId
+    + name : String
+  }
+  class CustomerId <<value>>
+  class ProviderId <<value>>
+  class ServiceId <<value>>
+  class AppointmentId <<value>>
+  class ServiceProvider <<immutable record>> {
+    + supports(service, mode) : boolean
+    + workingHours : Map
+    + preparationBuffer : Duration
+  }
+  class Service <<immutable record>> {
+    + duration : Duration
+    + baseFee : Money
+    + kind : AppointmentKind
+  }
+  class WorkingPeriod <<immutable record>>
+  class Money <<EUR value>> {
+    + amount : BigDecimal
+    + plus(other) : Money
+  }
+  class TimeSlot <<half-open value>> {
+    + start : Instant
+    + end : Instant
+    + overlaps(other) : boolean
+  }
+  class BookingOptions <<immutable record>> {
+    + additionalFees : Map
+    + totalAdditionalFee() : Money
+  }
+  enum AppointmentStatus {
+    PENDING
+    CONFIRMED
+    COMPLETED
+    CANCELLED
+  }
+  enum AppointmentMode {
+    ONLINE
+    IN_PERSON
+  }
+  enum AppointmentKind {
+    CONSULTATION
+    SERVICE
+  }
+  enum ProviderCategory {
+    HEALTHCARE
+    TUTORING
+    CONSULTING
+    PERSONAL_SERVICES
+  }
+
+}
+package "com.appointease.domain.state" {
+  interface AppointmentState <<sealed>> {
+    + status() : AppointmentStatus
+    + confirm(slot, now) : AppointmentState
+    + cancel(slot, now) : AppointmentState
+    + complete(slot, now) : AppointmentState
+    + requireRescheduling(slot, now)
+  }
+  class PendingState
+  class ConfirmedState
+  class CompletedState <<terminal>>
+  class CancelledState <<terminal>>
+}
+package "com.appointease.domain.time" {
+  class DomainTime {
+    - clock : Clock
+    - zone : ZoneId
+    + now() : Instant
+    + resolve(local) : ZonedDateTime
+  }
+}
+package "com.appointease.domain.exception" {
+  class DomainValidationException
+  class InvalidTransitionException
+}
+note bottom of Appointment
+Validated spec construction via Builder and polymorphic creators.
+Concrete subtype retained by lifecycle replacements.
+Transitions return replacements; original never changes.
+validateReschedule returns a slot proposal; reschedule a detached replacement.
+Repository owns atomic reservation/collision checks and revisions/events.
+end note
+note bottom of DomainTime
+Default Europe/Vilnius; explicit configurable zone.
+Reject DST gaps; select earlier instant in overlaps.
+Working boundaries use the same explicit resolution.
+end note
+package "com.appointease.domain.creation" {
+  class AppointmentBuilder {
+    + build(creator, time) : Appointment
+  }
+  abstract class AppointmentCreator {
+    + create(spec) : Appointment
+    # createAppointment(spec) : Appointment
+  }
+  class ConsultationAppointmentCreator
+  class ServiceAppointmentCreator
+}
+
+package "com.appointease.domain.mode" {
+  interface AppointmentModeFactory
+  class OnlineModeFactory
+  class InPersonModeFactory
+  interface MeetingDetails <<sealed>>
+  interface ParticipationInstructions <<sealed>>
+  class AppointmentModeDetails <<validated pair>>
+  class OnlineMeetingDetails <<immutable>>
+  class OnlineParticipationInstructions <<immutable>>
+  class InPersonMeetingDetails <<immutable>>
+  class InPersonParticipationInstructions <<immutable>>
+}
+package "com.appointease.domain.addon" {
+  interface AppointmentService {
+    + quote(service) : BookingEnhancements
+  }
+  class BaseAppointmentService
+  abstract class AppointmentServiceDecorator
+  class PriorityBookingDecorator
+  class ReminderServiceDecorator
+  class BookingEnhancements <<immutable>>
+}
+note bottom of AppointmentModeDetails
+Products share mode and factory-instance identity.
+Concrete product records are nested inside their factory.
+end note
+package "com.appointease.domain.scheduling" {
+  interface AvailabilityStrategy {
+    + preparationBuffer(provider) : Duration
+  }
+  class StandardAvailabilityStrategy
+  class PreparationBufferAvailabilityStrategy
+  class ReservationRules {
+    + validate(candidate, strategy, schedule, time) : Reservation
+  }
+  class Reservation <<immutable record>> {
+    + appointment : Appointment
+    + preparationBuffer : Duration
+    + effectiveSlot() : TimeSlot
+    + blocksAvailability() : boolean
+  }
+}
+package "com.appointease.application.port" {
+  interface AppointmentRepository {
+    + find(id) : Optional
+    + history(customerId) : List
+    + reservations() : List
+    + providers() / services() : List
+    + customer(id) : Optional
+    + events() : List
+    + reserve(candidate, strategy) : Appointment
+    + reschedule(id, start, strategy) : Appointment
+    + transition(id, command) : Appointment
+  }
+  enum AppointmentTransition {
+    CONFIRM
+    CANCEL
+    COMPLETE
+  }
+  class RepositoryException
+}
+package "com.appointease.infrastructure.memory" {
+  class InMemoryAppointmentRepository {
+    - lock : ReentrantLock
+    - entries : Map
+    - customers : Map
+    - providers : Map
+    - services : Map
+    - clock : Clock
+    - zone : ZoneId
+  }
+}
+note bottom of InMemoryAppointmentRepository
+All reads and read/validate/replace commands use one instance lock.
+Catalogs and returned snapshots are immutable.
+Capture clock once per command; failure leaves map unchanged.
+end note
+package "com.appointease.domain.event" {
+  class AppointmentEvent <<immutable record>>
+}
+package "com.appointease.application" {
+  class BookingFacade
+  class CommittedEventDispatcher
+  class AppointmentAssembler
+  class BookingRequest <<record>>
+  class BookingResult <<record>>
+}
+package "com.appointease.application.event" {
+  class AppointmentEventPublisher
+  interface AppointmentListener
+  class DeliveryFailure <<record>>
+}
+package "com.appointease.application.port" {
+  interface CalendarPort
+  class CalendarSyncException
+}
+package "com.appointease.infrastructure.calendar" {
+  class ExternalCalendarAdapter
+  class SimulatedExternalCalendarClient
+  class LegacyCalendarException
+}
+package "com.appointease.infrastructure.notification" {
+  class NotificationListener
+  class AuditListener
+}
+package "com.appointease.presentation" {
+  class ConsoleApplication
+  class ConsoleInput
+}
+package "com.appointease.infrastructure.seed" {
+  class DemoCatalog
+  class DemoSeed
+}
+note "All nine patterns and interactive console implemented.\nOne shared dispatcher per repository; callbacks after store unlock.\nS6.1 verified acyclic packages; stop after S6.1." as Boundary
+Customer --> CustomerId
+ServiceProvider --> ProviderId
+Service --> ServiceId
+Service --> AppointmentKind
+Service --> Money
+ServiceProvider --> ProviderCategory
+ServiceProvider --> ServiceId : supported IDs
+ServiceProvider --> AppointmentMode : supported modes
+ServiceProvider *-- WorkingPeriod : immutable weekly hours
+Appointment --> AppointmentId
+Appointment --> "1" Customer
+Appointment --> "1" ServiceProvider
+Appointment --> "1" Service
+Appointment --> "1" TimeSlot : via spec
+Appointment --> "1" BookingOptions : via enhancements
+Appointment --> AppointmentMode
+BookingOptions --> Money
+AppointmentState <|.. PendingState
+AppointmentState <|.. ConfirmedState
+AppointmentState <|.. CompletedState
+AppointmentState <|.. CancelledState
+PendingState ..> ConfirmedState : confirm before start
+PendingState ..> CancelledState : cancel before start
+ConfirmedState ..> CancelledState : cancel before start
+ConfirmedState ..> CompletedState : complete at/after end
+Appointment *-- AppointmentState : delegates decisions
+AppointmentState ..> AppointmentStatus
+Appointment ..> DomainTime : injected per operation
+AppointmentCreator <|-- ConsultationAppointmentCreator
+AppointmentCreator <|-- ServiceAppointmentCreator
+AppointmentBuilder --> AppointmentCreator
+Appointment <|-- ConsultationAppointment
+Appointment <|-- ServiceAppointment
+Appointment *-- ValidatedAppointmentSpec
+AppointmentBuilder ..> ValidatedAppointmentSpec : validates
+ValidatedAppointmentSpec ..> AppointmentRules
+Appointment ..> AppointmentRules : reschedule proposal
+ConsultationAppointmentCreator ..> ConsultationAppointment : creates
+ServiceAppointmentCreator ..> ServiceAppointment : creates
+AppointmentModeFactory <|.. OnlineModeFactory
+AppointmentModeFactory <|.. InPersonModeFactory
+MeetingDetails <|.. OnlineMeetingDetails
+MeetingDetails <|.. InPersonMeetingDetails
+ParticipationInstructions <|.. OnlineParticipationInstructions
+ParticipationInstructions <|.. InPersonParticipationInstructions
+OnlineModeFactory ..> OnlineMeetingDetails
+OnlineModeFactory ..> OnlineParticipationInstructions
+InPersonModeFactory ..> InPersonMeetingDetails
+InPersonModeFactory ..> InPersonParticipationInstructions
+AppointmentModeDetails *-- MeetingDetails
+AppointmentModeDetails *-- ParticipationInstructions
+AppointmentBuilder --> AppointmentModeFactory
+ValidatedAppointmentSpec *-- AppointmentModeDetails
+AppointmentService <|.. BaseAppointmentService
+AppointmentService <|.. AppointmentServiceDecorator
+AppointmentServiceDecorator o-- AppointmentService : delegates
+AppointmentServiceDecorator <|-- PriorityBookingDecorator
+AppointmentServiceDecorator <|-- ReminderServiceDecorator
+AppointmentService ..> BookingEnhancements
+BookingEnhancements *-- BookingOptions
+AppointmentBuilder --> AppointmentService : quote
+ValidatedAppointmentSpec *-- BookingEnhancements
+AvailabilityStrategy <|.. StandardAvailabilityStrategy
+AvailabilityStrategy <|.. PreparationBufferAvailabilityStrategy
+ReservationRules --> AvailabilityStrategy : polymorphic policy
+ReservationRules ..> ValidatedAppointmentSpec : intrinsic rules
+ReservationRules ..> AppointmentRules : effective working hours
+ReservationRules ..> Reservation
+Reservation *-- Appointment
+AppointmentRepository --> AppointmentTransition
+AppointmentTransition ..> Appointment : delegates to State
+AppointmentRepository <|.. InMemoryAppointmentRepository
+InMemoryAppointmentRepository --> ReservationRules
+InMemoryAppointmentRepository *-- Reservation
+AppointmentEvent --> Appointment : before / after snapshots
+BookingFacade --> AppointmentAssembler
+BookingFacade --> AppointmentRepository
+AppointmentAssembler --> AppointmentBuilder
+AppointmentAssembler --> AppointmentCreator : injected map
+BookingFacade --> CommittedEventDispatcher
+CommittedEventDispatcher --> AppointmentRepository : ordered events / cursor
+CommittedEventDispatcher --> AppointmentEventPublisher
+AppointmentEventPublisher o-- AppointmentListener : registration order
+AppointmentListener ..> AppointmentEvent
+CalendarPort <|.. ExternalCalendarAdapter
+ExternalCalendarAdapter --> SimulatedExternalCalendarClient : primitive format translation
+AppointmentListener <|.. NotificationListener
+AppointmentListener <|.. AuditListener
+CommittedEventDispatcher --> CalendarPort
+InMemoryAppointmentRepository *-- AppointmentEvent : atomic append with revision
+ConsoleApplication --> ConsoleInput : parse only
+ConsoleApplication --> BookingFacade
+DemoSeed --> BookingFacade : historical book / confirm
+Main --> ConsoleApplication : inject and run
+Main --> DemoCatalog
+Main --> DemoSeed
+@enduml

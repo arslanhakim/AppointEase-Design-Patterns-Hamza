@@ -1,0 +1,41 @@
+@startuml
+title Implemented S2 - validated creation and optional services
+actor "Domain caller / test" as Caller
+participant AppointmentBuilder as Builder
+participant AppointmentModeFactory as Family
+participant "ReminderServiceDecorator" as Reminder
+participant "PriorityBookingDecorator" as Priority
+participant BaseAppointmentService as Base
+participant ValidatedAppointmentSpec as Spec
+participant AppointmentCreator as Creator
+participant "Concrete Appointment" as Product
+Caller -> Builder : required fields, mode(factory), appointmentService(chain)
+Builder -> Family : createMeetingDetails()
+Family --> Builder : immutable meeting/location product
+Builder -> Family : createParticipationInstructions()
+Family --> Builder : immutable joining/check-in product
+Builder -> Builder : validate mode and same family identity
+Caller -> Builder : build(creator, DomainTime)
+Builder -> Reminder : quote(service)
+Reminder -> Priority : quote(service)
+Priority -> Base : quote(service)
+Base --> Priority : base quote
+Priority --> Reminder : quote + priority fee/instruction
+Reminder --> Builder : quote + reminder fee/instruction
+Builder -> Spec : construct and validate complete immutable spec
+note over Spec
+Required data, provider compatibility, duration,
+future start, working hours, preserved base fee.
+Uses injected time; does not reserve availability.
+end note
+Builder -> Creator : create(spec)
+Creator -> Creator : validate kind; dispatch createAppointment(spec)
+Creator -> Product : construct matching subtype from valid spec
+Product --> Creator : immutable PENDING appointment
+Creator --> Builder : product
+Builder --> Caller : appointment
+note over Caller, Product
+No event delivery, persistence, scheduling strategy or menu.
+Invalid input throws before an appointment is returned.
+end note
+@enduml
