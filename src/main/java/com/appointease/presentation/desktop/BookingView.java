@@ -36,7 +36,7 @@ final class BookingView extends VBox {
         setSpacing(12);
         getStyleClass().add("page");
         customer = Ui.combo("booking-customer", controller.customers(), Customer::name);
-        provider = Ui.combo("booking-provider", controller.providers(), ServiceProvider::name);
+        provider = Ui.combo("booking-provider", controller.bookableProviders(), ServiceProvider::name);
         service = Ui.combo("booking-service", List.of(), Service::name);
         mode = Ui.combo("booking-mode", List.of(), DesktopController::title);
         date = Ui.date("booking-date", day);
@@ -46,7 +46,13 @@ final class BookingView extends VBox {
         buffered.setId("booking-buffered");
         feedback.setId("booking-feedback");
         customer.setPromptText("Select a customer");
-        inputs = List.of(Ui.field("Customer", customer), Ui.field("Provider", provider),
+        var customerField = Ui.field("Customer", customer);
+        var newCustomer = Ui.action("+ New customer", "booking-new-customer", this::newCustomer);
+        newCustomer.getStyleClass().add("inline-action");
+        var customerHeading = new HBox(6, customerField.getChildren().removeFirst(), Ui.spacer(), newCustomer);
+        customerHeading.setAlignment(javafx.geometry.Pos.CENTER_LEFT);
+        customerField.getChildren().addFirst(customerHeading);
+        inputs = List.of(customerField, Ui.field("Provider", provider),
                 Ui.field("Service", service), Ui.field("Mode", mode), Ui.field("Date", date), Ui.field("Start time · HH:mm", time));
         fields.setHgap(20);
         fields.setVgap(10);
@@ -68,7 +74,7 @@ final class BookingView extends VBox {
         service.valueProperty().addListener((o, old, value) -> quote());
         priority.selectedProperty().addListener((o, old, value) -> quote());
         reminder.selectedProperty().addListener((o, old, value) -> quote());
-        provider.setValue(selected == null ? controller.providers().getFirst() : selected);
+        provider.setValue(selected == null ? controller.bookableProviders().stream().findFirst().orElse(null) : selected);
         widthProperty().addListener((o, old, width) -> arrange(width.doubleValue()));
         arrange(600);
         edit();
@@ -90,9 +96,34 @@ final class BookingView extends VBox {
     }
     private void edit() {
         prepared = null;
+        refreshCatalogs();
         feedback.setText("");
         getChildren().setAll(Ui.label("New appointment", "page-title"),
                 Ui.text("Choose the details, review the price, then reserve your appointment.", "subtitle"), form, feedback);
+    }
+    private void newCustomer() {
+        getStyleClass().remove("page");
+        getChildren().setAll(CatalogForms.customer(controller, null, saved -> {
+            getStyleClass().add("page");
+            edit();
+            customer.setValue(saved);
+            feedback.getStyleClass().setAll("feedback-success");
+            feedback.setText("Customer " + saved.name() + " created successfully and selected. Your appointment draft is preserved.");
+            getChildren().remove(feedback);
+            getChildren().add(2, feedback);
+        }, () -> { getStyleClass().add("page"); edit(); }));
+    }
+    void refreshCatalogs() {
+        if (prepared != null || completed) return;
+        Customer c = customer.getValue(); ServiceProvider p = provider.getValue(); Service s = service.getValue(); AppointmentMode m = mode.getValue();
+        customer.getItems().setAll(controller.customers());
+        customer.setValue(c == null ? null : customer.getItems().stream().filter(v -> v.id().equals(c.id())).findFirst().orElse(null));
+        provider.getItems().setAll(controller.bookableProviders());
+        provider.setValue(p == null ? null : provider.getItems().stream().filter(v -> v.id().equals(p.id())).findFirst().orElse(null));
+        service.getItems().setAll(controller.services(provider.getValue()));
+        if (s != null) service.setValue(service.getItems().stream().filter(v -> v.id().equals(s.id())).findFirst().orElse(null));
+        if (m != null && mode.getItems().contains(m)) mode.setValue(m);
+        quote();
     }
     private DesktopController.Draft draft() {
         return new DesktopController.Draft(customer.getValue(), provider.getValue(), service.getValue(), date.getValue(),

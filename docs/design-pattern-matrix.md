@@ -1,5 +1,7 @@
 # Nine GoF patterns - implemented design and justification
 
+S8A extends the existing Facade with customer/provider/service create and compare-and-replace edit commands. Catalog mutations share the appointment repository lock. Builder and Factory Method still construct every booking; provider mode configuration selects only the existing Online/In-Person Abstract Factory families. ReservationRules validates reschedules against current provider configuration and invokes Strategy once while retaining agreed service/fee snapshots. Decorator, State, Observer and Adapter behavior is preserved. Catalog changes do not masquerade as appointment lifecycle events. CatalogManagementTest adds mutation, snapshot and race coverage; the original 289 tests remain unchanged.
+
 **9/9 implemented:** State (S1); Factory Method, Abstract Factory, Builder, Decorator (S2); Strategy (S3); Adapter, Facade, Observer (S4). BookingIntegrationTest demonstrates all nine through the application API. S5 console now demonstrates the same pipeline through Main composition.
 
 S7A adds a read-only JavaFX presentation adapter on feature/javafx-ui. Main.createContext supplies the same facade graph to both entry points; desktop demonstration seed commands traverse the existing creators, builder, mode families, reminder decorator, strategy, state, facade, observers and calendar adapter. All nine implementations and original behavioral tests remain unchanged. S7A does not claim interactive desktop booking/lifecycle coverage; that is S7B after approval. See ui-review/S7A.md.

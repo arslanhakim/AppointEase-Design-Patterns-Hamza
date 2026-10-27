@@ -35,6 +35,8 @@ public final class DesktopShell extends BorderPane {
     private final Label monogram = Ui.label("Ae", "rail-brand");
     private final VBox footer = new VBox(9);
     private BookingView booking;
+    private ScheduleView schedule;
+    private double scheduleScroll;
     private boolean compact;
     private boolean expanded = true;
     private boolean pointerToggle;
@@ -59,7 +61,7 @@ public final class DesktopShell extends BorderPane {
         sidebarToggle.setOnAction(e -> { setExpanded(!expanded, pointerToggle); pointerToggle = false; });
         toggleFeedback.setInterpolator(Interpolator.SPLINE(0.23, 1, 0.32, 1));
         renderNavigation();
-        var badge = Ui.label("DEMO WORKSPACE", "workspace-badge");
+        var badge = Ui.label("LOCAL WORKSPACE", "workspace-badge");
         var header = new HBox(12, sidebarToggle, breadcrumb, Ui.spacer(), badge);
         header.setAlignment(Pos.CENTER_LEFT);
         header.getStyleClass().add("topbar");
@@ -136,6 +138,7 @@ public final class DesktopShell extends BorderPane {
     public ReadOnlyStringProperty pageTitleProperty() { return pageTitle.getReadOnlyProperty(); }
 
     public void navigate(DesktopController.Page page) {
+        rememberSchedule();
         controller.navigate(page);
         navigation.forEach((key, button) -> {
             button.getStyleClass().remove("nav-selected");
@@ -150,13 +153,27 @@ public final class DesktopShell extends BorderPane {
                 case APPOINTMENTS -> new AppointmentsView(controller, this::details, () -> navigate(DesktopController.Page.SCHEDULE), () -> newAppointment(null));
                 case NEW_APPOINTMENT -> {
                     if (booking == null || booking.completed()) booking = new BookingView(controller, overview.selectedDate(), null, this::details);
+                    booking.refreshCatalogs();
                     yield booking;
                 }
                 case PROVIDERS -> new ProvidersView(controller, initialDay, this::newAppointment);
-                case SCHEDULE -> new ScheduleView(controller, overview.selectedDate(), this::details, () -> navigate(DesktopController.Page.APPOINTMENTS));
+                case CUSTOMERS -> new CustomersView(controller, this::details);
+                case SERVICES -> new ServicesView(controller);
+                case SCHEDULE -> {
+                    if (schedule == null) schedule = new ScheduleView(controller, overview.selectedDate(), this::details,
+                            () -> navigate(DesktopController.Page.APPOINTMENTS));
+                    else schedule.reload();
+                    yield schedule;
+                }
                 case ACTIVITY -> new ActivityView(controller);
             };
             show(view);
+            if (view == schedule) Platform.runLater(() -> {
+                if (scroll.getContent() != schedule) return;
+                applyCss(); layout();
+                schedule.restoreFocus();
+                scroll.setVvalue(scheduleScroll);
+            });
         } catch (RuntimeException ex) {
             var message = Ui.text("", "feedback-error");
             Ui.error(message, ex);
@@ -171,12 +188,22 @@ public final class DesktopShell extends BorderPane {
         navigate(DesktopController.Page.NEW_APPOINTMENT);
     }
     private void details(AppointmentId id) {
+        boolean fromSchedule = scroll.getContent() == schedule && schedule != null;
         navigate(DesktopController.Page.APPOINTMENTS);
         pageTitle.set("Appointment details");
-        show(new AppointmentDetailsView(controller, id, () -> navigate(DesktopController.Page.APPOINTMENTS)));
+        show(new AppointmentDetailsView(controller, id, () -> navigate(fromSchedule
+                ? DesktopController.Page.SCHEDULE : DesktopController.Page.APPOINTMENTS), fromSchedule));
+    }
+    private void rememberSchedule() {
+        if (schedule != null && scroll.getContent() == schedule) {
+            scheduleScroll = scroll.getVvalue();
+            schedule.rememberFocus();
+        }
     }
     private void show(Node node) {
+        node.getStyleClass().remove("compact");
         if (compact && node.getStyleClass().contains("page")) node.getStyleClass().add("compact");
+        scroll.setFitToHeight(node instanceof AppointmentsView || node instanceof ActivityView);
         scroll.setContent(node);
         scroll.setVvalue(0);
     }
@@ -210,7 +237,7 @@ public final class DesktopShell extends BorderPane {
         VBox.setVgrow(space, Priority.ALWAYS);
         footer.getChildren().setAll(Ui.text("LOCAL WORKSPACE", "sidebar-caption"),
                 Ui.text(controller.time().zone().getId(), "sidebar-note"),
-                Ui.text("Fictional data.\nResets when you close the app.", "sidebar-note"));
+                Ui.text("Session data.\nResets when you close the app.", "sidebar-note"));
         footer.getStyleClass().add("sidebar-footer");
         var result = new VBox(16, brand, links, space, footer);
         result.setId("navigation-sidebar");

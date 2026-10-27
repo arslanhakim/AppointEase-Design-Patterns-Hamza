@@ -18,7 +18,7 @@ import java.util.function.Supplier;
 
 /** UI orchestration only: rules, quotes and atomic writes belong to the existing domain/facade. */
 public final class DesktopController {
-    public enum Page { OVERVIEW, APPOINTMENTS, NEW_APPOINTMENT, PROVIDERS, SCHEDULE, ACTIVITY }
+    public enum Page { OVERVIEW, APPOINTMENTS, NEW_APPOINTMENT, CUSTOMERS, PROVIDERS, SERVICES, SCHEDULE, ACTIVITY }
     public enum Action { CONFIRM, CANCEL, COMPLETE, RESCHEDULE }
     public record Draft(Customer customer, ServiceProvider provider, Service service, LocalDate day,
             String time, AppointmentMode mode, boolean priority, boolean reminder, boolean buffered) { }
@@ -26,7 +26,6 @@ public final class DesktopController {
     public record PreparedMove(String commandId, AppointmentId id, Instant start, AvailabilityStrategy strategy) { }
     public record Activity(String channel, AppointmentEvent event) { }
     private final BookingFacade facade;
-    private final List<Customer> customers;
     private final DomainTime time;
     private final Supplier<List<AppointmentEvent>> notifications;
     private final Supplier<List<AppointmentEvent>> audit;
@@ -37,13 +36,30 @@ public final class DesktopController {
     public DesktopController(BookingFacade facade, List<Customer> customers, DomainTime time,
             Supplier<List<AppointmentEvent>> notifications, Supplier<List<AppointmentEvent>> audit) {
         this.facade = Objects.requireNonNull(facade);
-        this.customers = List.copyOf(customers);
         this.time = Objects.requireNonNull(time);
         this.notifications = Objects.requireNonNull(notifications);
         this.audit = Objects.requireNonNull(audit);
     }
     public DomainTime time() { return time; }
-    public List<Customer> customers() { return customers; }
+    public List<Customer> customers() { return facade.customers(); }
+    public Customer saveCustomer(Customer expected, String name) {
+        Customer saved = expected == null ? facade.createCustomer(name) : facade.updateCustomer(expected, name);
+        revision++;
+        return saved;
+    }
+    public List<Service> services() { return facade.services(); }
+    public Service saveService(Service expected, Service value) {
+        var saved = expected == null ? facade.createService(value) : facade.updateService(expected, value);
+        revision++;
+        return saved;
+    }
+    public ServiceProvider saveProvider(ServiceProvider expected, ServiceProvider value) {
+        var saved = expected == null ? facade.createProvider(value) : facade.updateProvider(expected, value);
+        revision++;
+        return saved;
+    }
+    public List<Appointment> customerAppointments(CustomerId id) { return facade.history(id); }
+    public List<ServiceProvider> bookableProviders() { return providers().stream().filter(ServiceProvider::enabled).toList(); }
     public List<ServiceProvider> providers() { return facade.providers(); }
     public List<Service> services(ServiceProvider provider) {
         return facade.services().stream().filter(s -> provider != null && provider.serviceIds().contains(s.id())).toList();
@@ -57,7 +73,7 @@ public final class DesktopController {
     public List<AppointmentEvent> history(AppointmentId id) { return facade.events(id); }
     public List<Appointment> appointments(String search, AppointmentStatus status, ProviderId provider, LocalDate day) {
         String query = search == null ? "" : search.strip().toLowerCase(Locale.ROOT);
-        return customers.stream().flatMap(c -> facade.history(c.id()).stream())
+        return customers().stream().flatMap(c -> facade.history(c.id()).stream())
                 .filter(a -> status == null || a.status() == status)
                 .filter(a -> provider == null || a.provider().id().equals(provider))
                 .filter(a -> day == null || a.slot().start().atZone(time.zone()).toLocalDate().equals(day))
@@ -96,7 +112,10 @@ public final class DesktopController {
         if (!facade.available(request)) throw new SlotUnavailableException();
         return new PreparedBooking(UUID.randomUUID().toString(), request, draft, extra.quote(draft.service()));
     }
-    public BookingResult book(PreparedBooking prepared) { return committed(facade.book(prepared.commandId(), prepared.request())); }
+    public BookingResult book(PreparedBooking prepared) {
+        var d = prepared.draft();
+        return committed(facade.bookReviewed(prepared.commandId(), prepared.request(), d.customer(), d.provider(), d.service()));
+    }
     public PreparedMove prepareMove(AppointmentId id, LocalDate day, String input, boolean buffered) {
         return new PreparedMove(UUID.randomUUID().toString(), id, resolve(day, input).toInstant(), strategy(buffered));
     }

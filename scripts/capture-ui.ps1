@@ -3,7 +3,7 @@ param(
     [string]$View = 'Desktop',
     [ValidatePattern('^[0-9]{2}-[a-z0-9-]+$')]
     [string]$S7BName,
-    [ValidateSet('S7B', 'S7C', 'sidebar-toggle', 'sidebar-icon-final')]
+    [ValidateSet('S7B', 'S7C', 'S8A', 'S8B', 'S8C', 'sidebar-toggle', 'sidebar-icon-final')]
     [string]$Slice = 'S7B'
 )
 $ErrorActionPreference = 'Stop'

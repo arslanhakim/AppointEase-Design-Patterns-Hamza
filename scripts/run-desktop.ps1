@@ -1,4 +1,4 @@
-param([switch]$Verify, [switch]$VerifyS7B, [switch]$VerifyS7C, [switch]$VerifySidebar, [switch]$ReduceMotion, [switch]$Capture, [switch]$CaptureIconFinal, [string]$MavenRepository = (Join-Path $env:USERPROFILE '.m2/repository'))
+param([switch]$Verify, [switch]$VerifyS7B, [switch]$VerifyS7C, [switch]$VerifyS8A, [switch]$VerifyS8B, [switch]$VerifyS8C, [switch]$VerifySidebar, [switch]$ReduceMotion, [switch]$Capture, [switch]$CaptureIconFinal, [string]$MavenRepository = (Join-Path $env:USERPROFILE '.m2/repository'))
 $ErrorActionPreference = 'Stop'
 if ($CaptureIconFinal) { $VerifySidebar = $true; $Capture = $true }
 $root = Split-Path $PSScriptRoot -Parent
@@ -13,13 +13,16 @@ $jar = Join-Path $root 'target/appointease-0.1.0-SNAPSHOT.jar'
 if (-not (Test-Path -LiteralPath $jar)) { throw 'Run mvn clean verify first.' }
 $entrypoint = 'com.appointease.DesktopMain'
 $classpath = $jar
-if ($Verify -or $VerifyS7B -or $VerifyS7C -or $VerifySidebar -or $Capture) {
+if ($Verify -or $VerifyS7B -or $VerifyS7C -or $VerifyS8A -or $VerifyS8B -or $VerifyS8C -or $VerifySidebar -or $Capture) {
     $entrypoint = 'com.appointease.presentation.desktop.DesktopVisualCheck'
     $classpath = (Join-Path $root 'target/test-classes') + [IO.Path]::PathSeparator + $jar
 }
 if ($VerifyS7B -or $VerifyS7C -or $Capture) { $entrypoint = 'com.appointease.presentation.desktop.DesktopS7BCheck' }
 if ($VerifySidebar) { $entrypoint = 'com.appointease.presentation.desktop.DesktopSidebarCheck' }
+if ($VerifyS8A) { $entrypoint = 'com.appointease.presentation.desktop.DesktopS8ACheck' }
 $applicationArgs = @()
+if ($VerifyS8B) { $entrypoint = 'com.appointease.presentation.desktop.DesktopS8BCheck' }
+if ($VerifyS8C) { $entrypoint = 'com.appointease.presentation.desktop.DesktopS8CCheck' }
 if ($Capture) { $applicationArgs = @('--capture') }
 if ($CaptureIconFinal) { $applicationArgs += '--icon-final' }
 if ($VerifyS7C) { $applicationArgs += '--s7c' }

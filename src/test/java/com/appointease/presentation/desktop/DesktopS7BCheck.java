@@ -197,9 +197,9 @@ public final class DesktopS7BCheck {
         shot("07-activity", false);
         if (polish) { size(true); shot("23-activity-compact", true); size(false); }
         check(() -> {
-            require(stage.getScene().getRoot().lookupAll(".history-row").size() >= 20, "Activity refresh shows new lifecycle records");
+            require(((ListView<?>) node("activity-records")).getItems().size() >= 20, "Activity refresh shows new lifecycle records");
             combo("activity-channel").setValue("Audit");
-            require(stage.getScene().getRoot().lookupAll(".history-row").size() >= 10, "Activity channel filter works");
+            require(((ListView<?>) node("activity-records")).getItems().size() >= 10, "Activity channel filter works");
         });
         // Exercise every view at compact size and verify content fits its viewport.
         size(true);

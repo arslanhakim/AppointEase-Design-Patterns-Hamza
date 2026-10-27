@@ -9,7 +9,15 @@ import java.util.function.Consumer;
 import java.util.stream.Collectors;
 
 final class ProvidersView extends VBox {
+    private final DesktopController controller;
+    private final LocalDate day;
+    private final Consumer<ServiceProvider> book;
     ProvidersView(DesktopController controller, LocalDate day, Consumer<ServiceProvider> book) {
+        this.controller = controller; this.day = day; this.book = book;
+        show("", null);
+    }
+    private void show(String message, ProviderId selected) {
+        getStyleClass().remove("page");
         getStyleClass().add("page");
         setSpacing(16);
         var provider = Ui.combo("provider-select", controller.providers(), p -> p.name() + " · " + DesktopController.title(p.category()));
@@ -34,6 +42,7 @@ final class ProvidersView extends VBox {
                             .map(period -> period.start() + "–" + period.end()).collect(Collectors.joining(", ")))
                     .collect(Collectors.joining("   ·   "));
             detail.getChildren().setAll(Ui.label(p.name(), "section-title"),
+                    Ui.text(p.enabled() ? "Enabled for new bookings" : "Disabled · enable this provider in Edit provider to accept bookings", "muted"),
                     Ui.text("Working hours · " + controller.time().zone() + "\n" + hours
                             + "\nPreparation buffer: " + p.preparationBuffer().toMinutes() + " minutes", "row-secondary"),
                     Ui.field("Supported services & base fees", service),
@@ -47,12 +56,24 @@ final class ProvidersView extends VBox {
                                     + ". Advisory only; this time has not been reserved.");
                         } catch (RuntimeException ex) { Ui.error(feedback, ex); }
                     }), Ui.primary("New appointment with provider", "provider-book", () -> book.accept(p))), feedback);
+            detail.lookup("#provider-book").setDisable(!p.enabled());
+            detail.lookup("#provider-check").setDisable(!p.enabled() || controller.customers().isEmpty());
         };
         provider.valueProperty().addListener((o, a, b) -> render.run());
         detail.getStyleClass().add("detail-panel");
+        var feedback = Ui.feedback("providers-feedback"); feedback.setText(message); feedback.getStyleClass().add("feedback-success");
+        var edit = Ui.action("Edit provider", "providers-edit", () -> edit(provider.getValue()));
+        edit.disableProperty().bind(provider.valueProperty().isNull());
         getChildren().setAll(Ui.label("Providers", "page-title"),
                 Ui.text("Find the right service, inspect working hours and check an exact time.", "subtitle"),
+                Ui.actions(Ui.primary("Add provider", "providers-add", () -> edit(null)), edit), feedback,
                 Ui.field("Browse providers", provider), detail);
         provider.getSelectionModel().selectFirst();
+        if (selected != null) provider.getItems().stream().filter(p -> p.id().equals(selected)).findFirst().ifPresent(provider::setValue);
+    }
+    private void edit(ServiceProvider provider) {
+        getStyleClass().remove("page");
+        getChildren().setAll(CatalogForms.provider(controller, provider,
+                saved -> show("Provider " + saved.name() + (provider == null ? " created" : " updated") + " successfully.", saved.id()), () -> show("", provider == null ? null : provider.id())));
     }
 }

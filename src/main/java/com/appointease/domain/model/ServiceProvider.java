@@ -10,7 +10,11 @@ import java.util.Set;
 
 public record ServiceProvider(ProviderId id, String name, ProviderCategory category,
         Set<ServiceId> serviceIds, Set<AppointmentMode> modes,
-        Map<DayOfWeek, List<WorkingPeriod>> workingHours, Duration preparationBuffer) {
+        Map<DayOfWeek, List<WorkingPeriod>> workingHours, Duration preparationBuffer, boolean enabled) {
+    public ServiceProvider(ProviderId id, String name, ProviderCategory category, Set<ServiceId> serviceIds,
+            Set<AppointmentMode> modes, Map<DayOfWeek, List<WorkingPeriod>> workingHours, Duration preparationBuffer) {
+        this(id, name, category, serviceIds, modes, workingHours, preparationBuffer, true);
+    }
     public ServiceProvider {
         Validation.required(id, "provider ID");
         name = Validation.text(name, "provider name");
@@ -48,7 +52,7 @@ public record ServiceProvider(ProviderId id, String name, ProviderCategory categ
     }
 
     public boolean supports(Service service, AppointmentMode mode) {
-        return serviceIds.contains(Validation.required(service, "service").id())
+        return enabled && serviceIds.contains(Validation.required(service, "service").id())
                 && modes.contains(Validation.required(mode, "mode"));
     }
 }

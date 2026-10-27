@@ -39,6 +39,11 @@ public record DemoCatalog(List<Customer> customers, List<ServiceProvider> provid
     }
     private static Service service(String code, String name, int minutes, String price, AppointmentKind kind) {
         return new Service(new ServiceId("service-" + code + "-001"), name, Duration.ofMinutes(minutes),
-                new Money(new BigDecimal(price)), kind);
+                new Money(new BigDecimal(price)), kind, switch (code) {
+                    case "health" -> ProviderCategory.HEALTHCARE;
+                    case "tutor" -> ProviderCategory.TUTORING;
+                    case "salon" -> ProviderCategory.PERSONAL_SERVICES;
+                    default -> ProviderCategory.CONSULTING;
+                });
     }
 }

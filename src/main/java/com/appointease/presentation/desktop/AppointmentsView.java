@@ -5,6 +5,7 @@ import com.appointease.domain.model.*;
 import javafx.scene.control.*;
 import javafx.scene.input.KeyCode;
 import javafx.scene.layout.VBox;
+import javafx.scene.layout.Priority;
 import java.util.List;
 import java.util.function.Consumer;
 
@@ -13,6 +14,9 @@ final class AppointmentsView extends VBox {
     AppointmentsView(DesktopController controller, Consumer<AppointmentId> details, Runnable schedule, Runnable create) {
         getStyleClass().add("page");
         setSpacing(12);
+        table.setMinHeight(150);
+        table.setMaxHeight(Double.MAX_VALUE);
+        VBox.setVgrow(table, Priority.ALWAYS);
         var search = new TextField();
         search.setPromptText("Customer, provider, service or reference");
         search.setId("appointments-search");
@@ -23,8 +27,11 @@ final class AppointmentsView extends VBox {
         provider.setPromptText("All providers");
         var count = Ui.text("", "muted");
         Runnable refresh = () -> {
+            var selected = table.getSelectionModel().getSelectedItem();
             table.getItems().setAll(controller.appointments(search.getText(), status.getValue(),
                     provider.getValue() == null ? null : provider.getValue().id(), null));
+            if (selected != null) table.getItems().stream().filter(a -> a.id().equals(selected.id()))
+                    .findFirst().ifPresent(a -> table.getSelectionModel().select(a));
             count.setText(table.getItems().size() + " appointments · All dates, including historical and cancelled bookings");
         };
         Ui.column(table, "Date & time", 165, a -> controller.format(a.slot().start()).replace(", ", "\n"));

@@ -1,6 +1,22 @@
 # Testing strategy
 
-Latest verification: the October 27 repository hygiene pass retained all 289 tests and passed the packaged Windows and console regressions. Commands, counts and limitations are recorded in [project status](project-status.md) and the latest [engineering history](engineering-history.md) entry. Earlier results below remain dated historical evidence.
+## S8C desktop usability verification
+
+`mvn clean verify` now runs 351 invocations: all 339 S8B tests plus 12 date-keyboard cases covering arrows, Monday/Sunday boundaries, month/year changes, leap-year clamping and untouched activation/Tab keys. No baseline JUnit test changed.
+
+Run `powershell -NoProfile -File scripts/run-desktop.ps1 -VerifyS8C -Capture` on an interactive Windows desktop for Schedule re-entry/details scroll and focus, refreshed mutations, native Month traversal/activation, compact Week controls, Activity selection/filtering/resize/empty/error behavior and the 505-appointment / 2,024-record performance fixture. The harness measures queries and refresh/CSS/layout after warmup; timings are observations, not flaky pass/fail thresholds. Captures remain under `docs/ui-review/screenshots/S8C/` and are ignored by Git.
+
+Retain `-VerifyS8A`, `-VerifyS8B`, `-VerifyS7C`, `-VerifySidebar` and `-Verify`, one GUI harness at a time, then `scripts/demo.ps1` and `scripts/verify-console.ps1`. S7C counts Activity ListView items because rows are now virtualized; the prior 20/10 record thresholds remain. S8B uses separated native press/release and a foreground test stage; its assertions are unchanged. Final results, raw screenshot links and measured limits: [S8C review](ui-review/S8C.md).
+
+## S8A catalog verification
+
+Run `mvn clean verify` for all 312 JUnit invocations: the original 289 unchanged plus 23 in CatalogManagementTest. The new cases cover customer create/edit/lookup and validation; immediate controller visibility and Overview discovery; provider configuration/disable/reference validation; service price/duration/category edits; booking entirely new records; immutable appointment/event/fee snapshots; stale editors/reviewed bookings/candidates; current reschedule constraints and exactly-once Strategy evaluation; concurrent unique creates, competing edits and 20 coordinated provider-disable/reservation races. No assertion bypass or test exclusion was added.
+
+On an interactive Windows desktop, run `powershell -NoProfile -File scripts/run-desktop.ps1 -VerifyS8A -Capture`. DesktopS8ACheck exercises the packaged application's actual customer/provider/service Add/Edit forms, error recovery, search/history, provider relationships, inline create/cancel draft preservation, booking and snapshot integrity. It writes raw Windows captures to `docs/ui-review/screenshots/S8A/`. These opt-in JavaFX checks are separate from Surefire, not skipped JUnit tests.
+
+Retain `-VerifyS7C`, `-VerifySidebar`, `-VerifySidebar -ReduceMotion` and `-Verify` for booking/lifecycle/grid/sidebar/Overview regressions. Run one GUI harness at a time; captures require exactly one AppointEase window. Run `scripts/demo.ps1` and `scripts/verify-console.ps1` against the built JAR. Exact executed results and limitations: [S8A review](ui-review/S8A.md), [engineering history](engineering-history.md).
+
+Latest verification: the October 28 S8A-S8C publication check passes all 351 tests. Commands, Windows/console results and limitations are recorded in [project status](project-status.md) and the latest [engineering history](engineering-history.md) entry. DesktopS8ACheck selects the created customer's stable ID for history checks, avoiding the ambiguous name search that also matched seeded Alex Morgan. Earlier results below remain dated historical evidence.
 
 ## Final sidebar publication verification
 

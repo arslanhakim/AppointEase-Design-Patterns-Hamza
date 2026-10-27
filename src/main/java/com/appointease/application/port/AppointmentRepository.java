@@ -10,6 +10,13 @@ import java.util.Optional;
 
 /** Atomic commands only: no public save or check-then-write path. Reads are immutable snapshots. */
 public interface AppointmentRepository {
+    List<Customer> customers();
+    Customer createCustomer(Customer value);
+    Customer updateCustomer(Customer expected, Customer replacement);
+    ServiceProvider createProvider(ServiceProvider value);
+    ServiceProvider updateProvider(ServiceProvider expected, ServiceProvider replacement);
+    Service createService(Service value);
+    Service updateService(Service expected, Service replacement);
     List<ServiceProvider> providers();
     List<Service> services();
     Optional<Customer> customer(CustomerId id);

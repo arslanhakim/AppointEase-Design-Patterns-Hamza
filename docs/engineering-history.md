@@ -2,6 +2,64 @@
 
 Historical implementation decisions, verification results and known limitations. S0/S1 records were reconstructed from source and rubric evidence; later entries record the checks performed at each milestone. Historical filenames, package contents and release states describe their date, not the current tree. Historical review boundaries are archival records, not current development instructions. Current status: [project-status.md](project-status.md).
 
+## 2026-10-28 — S8A-S8C final feature-branch publication checks
+
+**Scope and authorization:** The user approved S8A-S8C functional/visual review and authorized one commit and a normal push to `origin/feature/javafx-ui`. Reviewed every pending tracked diff and untracked source/report before staging. Initial local HEAD and GitHub feature branch both were `3b8b63779fd2db0d619a766e777af8b473a15a17`. GitHub main was `b8417e91960c3e632c16b2a3e1b14763445c5382`. Earlier no-commit handoffs below are historical and superseded by this publication authorization.
+
+**Release inventory:** 41 intended files. Java filenames below are relative to `src/main/java/com/appointease/`, except the test row.
+
+| Area | Included files |
+| --- | --- |
+| Application | `application/BookingFacade.java`, `application/port/AppointmentRepository.java` |
+| Domain | `domain/model/Service.java`, `domain/model/ServiceProvider.java`, `domain/scheduling/ReservationRules.java` |
+| Infrastructure | `infrastructure/memory/InMemoryAppointmentRepository.java`, `infrastructure/seed/DemoCatalog.java` |
+| Desktop | `presentation/desktop/ActivityView.java`, `AppointmentDetailsView.java`, `AppointmentsView.java`, `BookingView.java`, `CalendarKeyboard.java`, `CalendarModel.java`, `CatalogForms.java`, `CustomersView.java`, `DesktopController.java`, `DesktopShell.java`, `NavigationIcon.java`, `OverviewModel.java`, `ProvidersView.java`, `ScheduleView.java`, `ServicesView.java` |
+| CSS | `src/main/resources/com/appointease/presentation/desktop/theme.css` |
+| Tests | `src/test/java/com/appointease/domain/CatalogManagementTest.java`; `src/test/java/com/appointease/presentation/desktop/CalendarKeyboardTest.java`, `CalendarModelTest.java`, `DesktopS7BCheck.java`, `DesktopS8ACheck.java`, `DesktopS8BCheck.java`, `DesktopS8CCheck.java` |
+| Scripts | `scripts/run-desktop.ps1`, `scripts/capture-ui.ps1` |
+| Documentation | `README.md`, `docs/architecture.md`, `docs/design-pattern-matrix.md`, `docs/engineering-history.md`, `docs/project-status.md`, `docs/testing-strategy.md`, `docs/ui-review/S8A.md`, `S8B.md`, `S8C.md` |
+
+**Excluded:** All `target/` outputs, `.audit-tools/` logs/helpers, `.submission-check/`, `docs/ui-review/screenshots/` and the original academic ZIP remain local and ignored. No temporary files, screenshots, generated binaries, credentials or AI-specific configuration are included. Reviewed changed text contains no credential-scan matches. Existing `.gitignore`, POM, console sources and original JUnit tests are unchanged. All nine GoF roles remain; Factory Method/Builder, Abstract Factory, State, Decorator, Observer and Adapter implementation packages have no delta. Facade and Strategy retain their existing roles while supporting catalog management and current provider configuration.
+
+**Fresh checks on the final Java/test sources:**
+
+| Command/check | Result |
+| --- | --- |
+| `mvn clean verify` | BUILD SUCCESS, exit 0 at **00:58:04 +05:00**; **351 tests, 0 failures/errors/skips**; independent sum of 17 Surefire XML suites agrees; all five architecture checks pass |
+| `run-desktop.ps1 -VerifyS8A` | **40 assertions**, exit 0 |
+| `run-desktop.ps1 -VerifyS8B` | **80 assertions**, exit 0 |
+| `run-desktop.ps1 -VerifyS8C` | **70 assertions**, exit 0; 505 appointments / 2,024 Activity records |
+| `run-desktop.ps1 -VerifyS7C` | **85 assertions**, exit 0 |
+| `run-desktop.ps1 -VerifySidebar` | **106 assertions**, exit 0; motion enabled |
+| `run-desktop.ps1 -VerifySidebar -ReduceMotion` | **106 assertions**, exit 0; reduced motion |
+| `run-desktop.ps1 -Verify` | **13 assertions**, exit 0 |
+| `scripts/demo.ps1` and `scripts/verify-console.ps1` | Both exit 0; all **nine packaged-JAR child processes** pass |
+| `git diff --check` | Exit 0 |
+
+Windows checks ran serially against the packaged JAR, without recapturing already approved screenshots. The first S8A run exposed an ambiguous fixture search: `Morgan` matches both newly created Morgan Rivera and seeded Alex Morgan, with random-ID ordering. Both history selections now search the created customer's exact ID; all original 40 assertions remain and the corrected run passes. Production code was not changed during publication. The initial Maven run passed 351 tests; rebuilding after this harness correction first hit sandbox dependency access denial, then passed with approved cache/network access. No failed attempt is counted as a pass.
+
+**Measured limits:** S8C's 100-appointment Week refresh/CSS/layout measured median **144.43 ms**, maximum **223.88 ms** in this run. Operations and histories remain synchronous and process-local; dense Week rendering can briefly block input. Native Windows automation remains focus/timing-sensitive. No persistence, production-scale guarantee, non-Windows rendering verification or full assistive-technology certification is added.
+
+**Publication boundary and protected artifacts:** Commit message: `Add catalog management and multi-view appointment scheduling`. Only the feature branch is authorized for a normal push; no merge, force-push, main update or academic repackaging. The ZIP remains **1,372,171 bytes**, SHA-256 `D00D7E0F9FF82FBD49F6D4B0E27914AACBC90765A7E3541087D546F88A1D1A3A`. This entry records completed pre-commit verification; the resulting commit SHA, local/tracking/GitHub equality and final protected-artifact comparison are reported after publication.
+
+## 2026-10-28 — S8C: desktop usability and Activity handoff
+
+**Scope:** Implemented the authorized S8C slice on `feature/javafx-ui` after S8B visual approval, preserving the existing uncommitted S8A/S8B work. Schedule retains mode/date/provider/cancelled visibility, Week horizontal position and shell vertical position across destinations and return from details. Re-entry obtains current facade snapshots and provider choices by ID. Details opened from Calendar names its Back to Schedule action and restores originating focus when available. Month adds date-only arrows, Home/End, Page Up/Down, a single Tab entry point and native Enter/Space activation. Compact Week exposes named scrolling controls only when needed.
+
+Activity now uses a native virtualized selectable feed and selected immutable event details, 62/38 desktop columns and a compact stacked arrangement. Event type/time, classification, customer/provider, appointment reference, status and revision remain available. Refresh and resize preserve selection by event ID plus channel; empty/error states clear visual and accessible details. Field minimum heights prevent wrapped scheduled time from being compressed. No new animations, dependencies, backend APIs, business rules, threading or persistence architecture were introduced. The nine GoF implementations and console remain intact.
+
+**Files:** Presentation changes in DesktopShell, ScheduleView, new CalendarKeyboard, AppointmentDetailsView, ActivityView and theme.css. New CalendarKeyboardTest and DesktopS8CCheck; S8C runner/capture switches. The retained S7C harness counts Activity ListView items with the original 20/10 thresholds instead of materialized row nodes. Retained S8B native input now uses separate press/release events and an explicitly foreground stage; all assertions remain. README, architecture, testing strategy, project status and [S8C report](ui-review/S8C.md) describe the current contract and evidence.
+
+**Build:** Final `mvn clean verify` at **00:35:53 +05:00**, exit 0, **351 tests, zero failures/errors/skips**, independently checked against Surefire XML. All **339 S8B invocations** remain; 12 keyboard date cases were added. All five architecture checks pass. Production source count is 96; test source count is 24.
+
+**Windows and console:** S8C passes **70 assertions**, exit 0, and covers state/scroll/focus restoration, confirmation/rescheduling/cancellation refresh, native date traversal and activation, conditional Week controls, Activity selection/filtering/desktop proportions/compact stacking, full detail heights, empty/failure/recovery accessibility and larger histories. Retained S8A **40**, S8B **80**, S7C **85**, sidebar **106** (motion enabled), Overview **13**; console demo and QA have **nine successful packaged-JAR child processes**. Final S8C assertion count, timing table and screenshot inventory are recorded in the linked report. These opt-in Windows assertions are separate from Maven's 351 tests.
+
+**Performance and evidence:** The harness creates 500 additional bookings and confirmations through real facade commands, producing **505 appointments / 2,024 Activity records**, with 100 appointments in a busy week. Queries and refresh/CSS/layout are measured over 12 samples after three warmups on the JavaFX thread; render timing excludes OS composition and screenshot latency. Activity creates fewer than 40 cells for the full history. Queries are inexpensive; Week rendering is the dominant synchronous cost. There is no demonstrated need for background queries at this scale. Eleven real Windows PNGs cover both requested window sizes, selected Activity, compact stacked details, before/after navigation, Week scrolling, Month focus and details return; signature/decode checks and visual inspection are recorded in the S8C report. Captures remain local and ignored.
+
+**Intermediate issues:** Sandboxed Maven dependency access failed before the approved successful retry. Early new-harness key input did not reach the scene despite reported focus; a real control click and separated native press/release resolved input delivery. Two retained S8B runs missed their initial native Week click before the timing/foreground correction; no assertion was weakened. A retained sidebar run and a later S8C capture lost Windows foreground focus; unchanged reruns passed. A retained S7C run missed native Tab traversal; its unchanged direct rerun passed all 85 assertions. Visual review caught compressed Activity service/time text; the final layout and regression cover it. A source review then caught accessible event/error metadata surviving empty/recovered visual states; it was cleared and the regression strengthened. Captures were repeated with the pointer away from tooltip targets.
+
+**Limits and stop:** Navigation state lasts for the process only; scroll values are normalized and constrained by current content/viewport. Compact details and dense calendars scroll. Dense Week rendering can briefly block the UI; larger histories need separate profiling. Full assistive-technology certification, non-Windows graphics and real-window DST transitions were not verified; existing DST tests remain passing. No persistence, recurrence, drag/drop, automatic slot search or unrelated features. S8C stops for final review, uncommitted. Main remains `b8417e91960c3e632c16b2a3e1b14763445c5382`; the original academic ZIP remains 1,372,171 bytes with SHA-256 `D00D7E0F9FF82FBD49F6D4B0E27914AACBC90765A7E3541087D546F88A1D1A3A`. No commit, push, merge or archive modification.
+
 ## 2026-10-26 — S0: architecture and project foundation
 
 **Scope/completion:** Created the Java 21/Maven welcome application and design baseline. The workspace originally contained only Git metadata; no project conflicts were reported. No booking logic or patterns were implemented in S0.
@@ -606,3 +664,85 @@ These are the approved persistent icon rail, state-preserving accessible toggle,
 All four Windows harness launches passed on their first attempt in this audit and closed their windows. They cover the actual packaged application with cached JavaFX modules, including booking/lifecycle/conflicts, keyboard interactions, state preservation and supported window sizes. Prior native-input reliability and non-Windows/accessibility limitations remain historical limitations, not disproved by this run. Runtime remains offline. Network inspection and Git index writes initially encountered sandbox access restrictions; permitted retries succeeded. No application check failed or was weakened.
 
 **Protected artifacts and publication record:** Main remains b8417e91960c3e632c16b2a3e1b14763445c5382. The academic ZIP remains 1,372,171 bytes with SHA-256 D00D7E0F9FF82FBD49F6D4B0E27914AACBC90765A7E3541087D546F88A1D1A3A. This entry records completed pre-commit checks; the resulting cleanup SHA and push/local/tracking/GitHub equality are recorded after execution in the release report and ignored .audit-tools/hygiene-publication-result.json. Earlier commits, historical document references and ignored snapshot copies retain their original tooling metadata; no published history or academic archive was rewritten.
+
+## 2026-10-27 - S8A: in-session customer, provider and service management
+
+**Preparation and scope:** Confirmed a clean `feature/javafx-ui` working tree before changes; read README, architecture, engineering history, pattern matrix and current status/testing documentation. Inspected BookingFacade/assembler, immutable domain values, repository lock/commands, composition, JavaFX screens and existing tests. No current AGENTS.md or deleted agent-specific handoff file was assumed or restored. Work remained on the feature branch. The academic archive and main were not modified.
+
+**Capabilities:** Customers supports list/search, Add/Edit of its existing name and per-customer appointment history. A compact New Appointment action uses the shared customer form, preserves the complete booking draft and selects the new customer immediately; success is visible above the form. Providers gains create/edit, category, supported services, fixed Online/In-Person modes, seven-day hours including split shifts/closed days, preparation buffer and enabled state. Services gains list/search, create/edit of name/category/type/duration/base fee and provider relationship editing through the same provider form. New records are available without restart. All data remains process-local.
+
+**Architecture decisions:** Extended the existing facade/repository rather than creating a parallel catalog service/store. One ReentrantLock protects catalog and appointment mutations/reads; immutable record snapshots and typed IDs remain. Create checks duplicate IDs and provider references. Update compares the expected record and stable ID under the lock, rejecting stale/missing records. Pending/confirmed appointments prevent incompatible provider support/mode/enabled/hour changes; validation covers their stored preparation intervals. Buffer changes affect future bookings/reschedules, not stored reservations. Service/customer edits do not replace appointment/event snapshots or reprice/reschedule them. Reviewed desktop bookings compare the agreed catalog values before reserve's atomic catalog check. Overview/controller now read the live customer catalog. All nine GoF roles and layer boundaries remain intact; no dependencies or network/database service were introduced.
+
+Reschedule preserves original immutable appointment details and State validation, and additionally checks current provider configuration under the lock. Strategy is evaluated once against the current provider. The conservative boundary is explicit: the new interval must fit original snapshot hours as well as current hours. Expanding a provider's hours benefits new bookings but does not expand an old appointment's reschedule range. Catalog changes produce no appointment lifecycle events. Exact policies are in [architecture](architecture.md).
+
+**Changed files:** Paths under the Java rows are relative to `src/main/java/com/appointease/` unless stated otherwise.
+
+| Area | Files |
+| --- | --- |
+| Application | `application/BookingFacade.java`, `application/port/AppointmentRepository.java` |
+| Domain | `domain/model/Service.java`, `domain/model/ServiceProvider.java`, `domain/scheduling/ReservationRules.java` |
+| Infrastructure | `infrastructure/memory/InMemoryAppointmentRepository.java`, `infrastructure/seed/DemoCatalog.java` |
+| New presentation | `presentation/desktop/CatalogForms.java`, `CustomersView.java`, `ServicesView.java` |
+| Updated presentation | `presentation/desktop/BookingView.java`, `DesktopController.java`, `DesktopShell.java`, `NavigationIcon.java`, `OverviewModel.java`, `ProvidersView.java` |
+| Styling | `src/main/resources/com/appointease/presentation/desktop/theme.css` |
+| New tests | `src/test/java/com/appointease/domain/CatalogManagementTest.java`, `src/test/java/com/appointease/presentation/desktop/DesktopS8ACheck.java` |
+| Runners | `scripts/run-desktop.ps1`, `scripts/capture-ui.ps1` |
+| Documentation | `README.md`, `docs/architecture.md`, `docs/design-pattern-matrix.md`, `docs/project-status.md`, `docs/testing-strategy.md`, `docs/engineering-history.md`, new `docs/ui-review/S8A.md` |
+
+All existing test sources, POM, console implementation, original State/factory/decorator/observer/adapter classes and UML artifacts are unchanged. Local PNGs are additional ignored artifacts, indexed in [S8A review](ui-review/S8A.md).
+
+**Executed verification:**
+
+| Command/check | Result |
+| --- | --- |
+| Final `mvn clean verify` | Exit 0, BUILD SUCCESS at **19:21:12 +05:00**; **312 tests, 0 failures/errors/skips**; 94 production and 20 test sources compiled |
+| Retained test baseline | All original **289 invocations unchanged**; all five architecture checks pass |
+| `CatalogManagementTest` | **23 passing invocations**: validation, create/edit/lookup, new-record booking, live selection/projections, immutable service/customer/provider/event/fee snapshots, stale edits/reviews/candidates, provider constraints, disabled/missing records, current buffer and exactly-one Strategy evaluation, concurrent creates/edits and 20 provider-disable/reservation races |
+| `run-desktop.ps1 -VerifyS8A -Capture` | Exit 0; **40 actual-window assertions** on final JAR, including visible success without scrolling; **16 raw Windows PNGs** |
+| `run-desktop.ps1 -VerifyS7C` | Exit 0; **85 assertions**, including existing booking/lifecycle/grid/keyboard flows and both-size layout checks extended automatically to eight destinations |
+| `run-desktop.ps1 -VerifySidebar` | Exit 0 on unchanged rerun; **106 assertions**, motion enabled |
+| `run-desktop.ps1 -VerifySidebar -ReduceMotion` | Exit 0; **106 assertions**, motion disabled |
+| `run-desktop.ps1 -Verify` | Exit 0; **13 Overview assertions**, final JAR |
+| `scripts/demo.ps1` and `scripts/verify-console.ps1` | Both exit 0 on final JAR; **nine successful JAR children**; workflow, invalid input, explicit exit, EOF and UTC/Karachi cases |
+
+S7C and both sidebar runs preceded only the final two-line repositioning of inline customer success feedback; that final branch was exercised by the final S8A visibility assertion. No original test/assertion was removed or weakened. The old harness messages still say "six" in a few labels, but their Page.values/lookup loops inspected all eight destinations. Surefire reports and regenerated console transcripts are under `target/`.
+
+**Intermediate results and corrections:** The first sandbox clean build failed before compilation because Maven could not access dependencies; the approved run then found an existing AppointEase Activity window holding the JAR. After identifying and closing that exact window, the first full build passed 309 tests. Three additional tests increased the total to 312; two initially used `UTC` in the assembler against repository zone `Z`, correctly failing exact-zone validation. Correcting the fixture identifiers produced 312 passing tests; no production timezone rule changed. Screenshot review moved the customer action into the field heading to keep the normal desktop Review action visible, then moved inline creation success above the form. The first sidebar run failed at native tooltip hover; the unchanged rerun passed all 106 checks, and reduced-motion checks passed. Native input remains timing-sensitive. No failing result is omitted or reclassified as a pass.
+
+**Screenshots and visual review:** `docs/ui-review/screenshots/S8A/` contains customer list/new/success, provider management/new, service management/new, booking with newly created records, inline success, compact list/form/booking views and the scrolled weekly-hours/save section. Captures are unmodified Windows DWM pixels. Requested 1440x900/1024x768 outer windows yield 1424x892/1008x760 PNGs at 125% scaling. Actual screens were decoded and visually inspected; horizontal management action bounds pass at both sizes. Long forms and compact tables intentionally scroll vertically. Screenshot 09 confirms the visible success banner with the selected new customer and retained options. No generated mockups or image edits were used.
+
+**Limitations and exact next boundary:** Customer details are name-only, matching the existing domain. Supported modes are provider-wide; no service-specific mode override, arbitrary mode family, account/role system, catalog audit stream, deletion, persistence, import/export, automatic slot search or week/month scheduling is included. UI duration/buffer fields use whole minutes; operations are synchronous and catalogs/logs process-local. Original/current-hour reschedule restriction is documented above. Other platforms, exhaustive assistive-technology support and very large catalogs remain unverified. S8A ends at these catalog commands, forms, tests, captures and documentation. Stop for user review. S8B requires a separate agreed specification; none of the excluded features is implicitly authorized. No commit, push, merge, submission repackaging or S8B work occurred.
+
+**Protected artifacts:** Main remains `b8417e91960c3e632c16b2a3e1b14763445c5382`. The academic ZIP remains 1,372,171 bytes, SHA-256 `D00D7E0F9FF82FBD49F6D4B0E27914AACBC90765A7E3541087D546F88A1D1A3A`. The source changes remain unstaged on `feature/javafx-ui`; deleted AI-specific configuration files were not restored.
+
+## 2026-10-27 — S8B: full-height Appointments and multi-view calendar
+
+**Preparation and scope:** The user approved S8A visually and explicitly authorized S8B against its 312-test baseline. Inspected README, status, architecture, engineering history, S8A/S7C review evidence, actual shell/table/schedule/controller/facade/repository code and Windows harnesses. Confirmed `feature/javafx-ui` and preserved all existing S8A working changes. Main and the verified academic ZIP were recorded before work; no agent configuration was restored.
+
+**Implementation:** Appointments now fills the workspace viewport, grows/shrinks with the real window, has a 150-logical-pixel minimum, and scrolls internally only when rows overflow. Native columns/rows, filters, keyboard/double-click details and lifecycle actions remain. Resize keeps the current view and selected record; explicit refresh restores selection by ID where still visible.
+
+Schedule adds compact Day/Week/Month toggles sharing date, provider and cancelled state. CalendarModel is a pure projection of existing facade histories, using business-zone half-open boundaries and Monday-first ranges. There is no existing range API, so no parallel repository/store or business booking rules were introduced. Week has seven columns with elapsed-time placement, common planning hours, selected/today indication, minimum-width overlap lanes and horizontal scrolling above the canvas. Day retains the original proportional TimeGrid and now shares interval partitioning with Week. Month uses bounded non-cancelled/cancelled counts, complete leading/trailing weeks and exact-date navigation to Day. Its month/year heading and count-only cells keep the six-week desktop grid visible. S8B modifies presentation only; domain/application/infrastructure/console/POM and production fixtures remain as they were at S8B start.
+
+**Changed files (S8B delta, separate from retained S8A):** New `presentation/desktop/CalendarModel.java`; updated `AppointmentsView.java`, `ScheduleView.java`, `DesktopShell.java`; theme.css; new `CalendarModelTest.java` and `DesktopS8BCheck.java`; run-desktop.ps1/capture-ui.ps1 S8B modes; README, architecture, project status, this history and new [S8B review](ui-review/S8B.md). The review contains exact paths, design comparisons, screenshot links and recommended S8C boundaries.
+
+**Executed verification:**
+
+| Check | Result |
+| --- | --- |
+| Final `mvn clean verify` | Exit 0, BUILD SUCCESS **20:11:03 +05:00**, **339 tests, 0 failures/errors/skips**; independent Surefire XML sum agrees |
+| Baseline / architecture | All **312 original invocations** preserved; **27 CalendarModel invocations** added; all five architecture tests pass; no original test/harness source edited |
+| `run-desktop.ps1 -VerifyS8B -Capture` | Exit 0; **80 actual-window assertions**, **12 native PNGs**, repeated real 1440×900/1024×768 resizes, small/empty/one-row/56-record table cases, preserved filters/selection, week geometry/overlap/scrolling/navigation, month counts/date selection and details |
+| Retained `-VerifyS7C` | Exit 0; **85 assertions**, including all Day/keyboard/lifecycle behaviors and both-size viewport checks |
+| Retained `-VerifyS8A` | Exit 0; **40 assertions** |
+| Retained `-VerifySidebar` | Exit 0; **106 assertions**, motion enabled |
+| Retained `-Verify` | Exit 0; **13 Overview assertions** |
+| Console demo / standalone QA | Both scripts exit 0; all **nine packaged-JAR children** exit 0 |
+| Screenshots | All 12 nonempty PNG signatures/decode checks pass; 1424×892 desktop and 1008×760 compact DWM pixels at 125% scaling; actual captures visually inspected |
+
+S8B Windows fixtures compose the packaged production shell/controller/context, use real facade commands and never alter the production demo seed. Native Robot covers view/date clicks and keyboard details; deterministic control actions cover the remaining form/navigation checks. The actual stage is repeatedly resized, not just an offscreen layout. The retained harnesses launch actual DesktopMain. Final review extended per-day UTC-offset-axis detection to cover a Week planning origin normalized after a spring gap, with four additional regression invocations. S8B captures and S7C checks were repeated after that correction and final build. Supplemental S8A/sidebar/Overview checks preceded only that transition-axis refinement; their exercised ordinary dates and production paths are unchanged.
+
+**Intermediate failures and refinements:** Initial new harness compilation called a nonexistent controller method; corrected to the existing act API. A table assertion incorrectly assumed physical desktop dimensions imply more than 320 logical pixels of table height; actual 125%-scaled available height was 302.4. Replaced that assumption with available-height geometry, minimum and repeated-resize assertions. Additional harness failures arose from cancelling the first randomly ordered appointment instead of an explicit provider's record, querying new ScrollPane children before CSS/layout, and selecting an alphabetical provider with no busy-day records. Fixtures now specify the intended provider and layout before inspection. Screenshot review replaced repeated Week axes with a shared axis, placed horizontal scrolling above the canvas, and removed verbose Month previews. All final checks above passed; existing assertions were neither removed nor weakened. A local edit attempt used unavailable Python and made no changes; subsequent edits used the patch tool.
+
+**Limits and stop:** Process-local synchronous history scans, potentially wide dense weeks, ellipsized labels with full tooltip/details, compact vertical calendar scrolling and fresh Schedule state on re-entry remain explicit. Month-end navigation clamps via LocalDate.plusMonths. Tests exercise calendar DST boundaries, but real-window DST screenshots, full assistive-technology certification, non-Windows rendering and production-scale histories are not claimed. The recommended S8C scope is only a future navigation/accessibility/performance discussion, not work begun. No persistence, recurrence, drag/drop, automatic slot search or new integrations.
+
+**Protected state:** Branch remains `feature/javafx-ui`; index is empty. Main remains `b8417e91960c3e632c16b2a3e1b14763445c5382`. Academic ZIP is still 1,372,171 bytes with SHA-256 `D00D7E0F9FF82FBD49F6D4B0E27914AACBC90765A7E3541087D546F88A1D1A3A`. Captures remain local/ignored. No commit, push, merge, archive rewrite or S8C implementation.

@@ -11,10 +11,15 @@ final class AppointmentDetailsView extends VBox {
     private final AppointmentId id;
     private final VBox operation = new VBox(12);
     private final Label feedback = Ui.feedback("details-feedback");
+    private final boolean fromSchedule;
 
     AppointmentDetailsView(DesktopController controller, AppointmentId id, Runnable back) {
+        this(controller, id, back, false);
+    }
+    AppointmentDetailsView(DesktopController controller, AppointmentId id, Runnable back, boolean fromSchedule) {
         this.controller = controller;
         this.id = id;
+        this.fromSchedule = fromSchedule;
         setSpacing(18);
         getStyleClass().add("page");
         feedback.setId("details-feedback");
@@ -54,7 +59,7 @@ final class AppointmentDetailsView extends VBox {
                     + " · " + controller.format(event.occurredAt()) + "\nScheduled for "
                     + controller.format(event.after().slot().start()), "history-row"));
         }
-        getChildren().setAll(Ui.actions(Ui.action("Back to appointments", "details-back", back),
+        getChildren().setAll(Ui.actions(Ui.action(fromSchedule ? "Back to Schedule" : "Back to appointments", "details-back", back),
                         Ui.action("Refresh details", "details-refresh", () -> render(back))),
                 Ui.label("Appointment details", "page-title"), panel, actions, operation, feedback, history);
     }

@@ -13,19 +13,17 @@ import java.util.Objects;
 /** Read-only projection. Status grouping is display logic, never permission to mutate. */
 public final class OverviewModel {
     private final BookingFacade facade;
-    private final List<Customer> customers;
     private final DomainTime time;
 
     public OverviewModel(BookingFacade facade, List<Customer> customers, DomainTime time) {
         this.facade = Objects.requireNonNull(facade);
-        this.customers = List.copyOf(customers);
         this.time = Objects.requireNonNull(time);
     }
 
     public DomainTime time() { return time; }
 
     public Snapshot load(LocalDate day) {
-        var appointments = customers.stream().distinct().flatMap(c -> facade.history(c.id()).stream())
+        var appointments = facade.customers().stream().flatMap(c -> facade.history(c.id()).stream())
                 .filter(a -> a.slot().start().atZone(time.zone()).toLocalDate().equals(day))
                 .sorted(Comparator.comparing((Appointment a) -> a.slot().start()).thenComparing(a -> a.id().value()))
                 .toList();
