@@ -1,6 +1,6 @@
 # Implementation slices
 
-S0 through S6.1 are complete. S6 was explicitly authorized and audited October 26-27, 2026. Stop after S6.1. Historical boundaries below describe their original slice, not current authorization.
+S0 through S6.1 and S7A-S7C are complete. S7C passed visual review on October 27; the user authorized fresh release QA and publication of feature/javafx-ui using the specified commit message. Stop after feature-branch publication; no further slice, main merge or submission ZIP change is authorized. Historical boundaries below describe their original slice. See [S7C review](ui-review/S7C.md), [S7B review](ui-review/S7B.md), the historical [S7A screen map](ui-review/S7A.md) and [publication history](SESSION_HISTORY.md).
 
 | Slice | Proposed scope | Acceptance criteria / exit gate |
 | --- | --- | --- |

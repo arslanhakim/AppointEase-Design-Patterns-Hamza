@@ -98,7 +98,9 @@ class ArchitectureTest {
     private static void requireAllowed(String owner, String target) {
         String evidence = owner + " -> " + target;
         if (!target.startsWith(ROOT)) {
-            assertTrue(target.startsWith("java."), evidence);
+            boolean desktop = owner.startsWith(ROOT + "presentation.desktop.")
+                    || owner.equals(ROOT + "DesktopMain");
+            assertTrue(target.startsWith("java.") || (desktop && target.startsWith("javafx.")), evidence);
             return;
         }
         String from = layer(owner);
@@ -107,7 +109,8 @@ class ArchitectureTest {
             case "application" -> Set.of("application", "domain");
             case "infrastructure" -> Set.of("infrastructure", "application", "domain");
             case "presentation" -> Set.of("presentation", "application", "domain");
-            case "Main" -> Set.of("Main", "domain", "application", "infrastructure", "presentation");
+            case "Main", "DesktopMain", "ApplicationContext" -> Set.of("Main", "DesktopMain", "ApplicationContext",
+                    "domain", "application", "infrastructure", "presentation");
             default -> throw new AssertionError("Unknown production layer: " + from);
         };
         assertTrue(allowed.contains(layer(target)), evidence);

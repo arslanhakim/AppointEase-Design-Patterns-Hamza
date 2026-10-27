@@ -14,7 +14,7 @@ import java.io.*;
 import java.time.*;
 import java.util.Map;
 
-/** Sole composition root; demo setup uses the same facade as interactive commands. */
+/** Shared service composition root; the console remains an independent entry point. */
 public final class Main {
     private Main() {
     }
@@ -29,6 +29,12 @@ public final class Main {
     }
 
     public static ConsoleApplication create(InputStream input, OutputStream output, Clock clock, ZoneId zone) {
+        var context = createContext(clock, zone);
+        return new ConsoleApplication(input, output, context.facade(), context.customers(), context.time(),
+                context.notifications(), context.audit());
+    }
+
+    public static ApplicationContext createContext(Clock clock, ZoneId zone) {
         var catalog = DemoCatalog.create();
         var seed = new DemoSeed(clock, zone);
         var time = seed.time();
@@ -43,7 +49,7 @@ public final class Main {
         var facade = new BookingFacade(dispatcher, Map.of(AppointmentKind.CONSULTATION, new ConsultationAppointmentCreator(),
                 AppointmentKind.SERVICE, new ServiceAppointmentCreator()), time);
         seed.populate(facade);
-        return new ConsoleApplication(input, output, facade, catalog.customers(), time,
+        return new ApplicationContext(facade, catalog.customers(), time,
                 notifications::notifications, audit::history);
     }
 }

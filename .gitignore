@@ -49,3 +49,5 @@ credentials.xml
 *.pfx
 *.jks
 /settings.xml
+# Local visual review captures; never stage without explicit authorization
+/docs/ui-review/screenshots/

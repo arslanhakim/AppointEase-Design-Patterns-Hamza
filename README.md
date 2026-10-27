@@ -1,6 +1,22 @@
 # AppointEase
 
-Java 21 / Maven academic appointment booking console. **S0-S6.1 complete; all nine GoF patterns integrated and independently audited.** See docs/S6-AUDIT.md for findings and qualifications. No runtime network or external dependencies.
+Java 21 / Maven academic appointment booking application. **S0-S6.1 console complete; all nine GoF patterns integrated and independently audited.** See docs/S6-AUDIT.md for historical findings and qualifications. The feature/javafx-ui branch adds the separately authorized S7B JavaFX desktop. Both entry points run offline; only the desktop requires JavaFX.
+
+## JavaFX desktop (S7B with S7C visual polish)
+
+After `mvn clean verify`, run the Windows desktop without Maven or network access:
+
+```powershell
+powershell -NoProfile -File scripts/run-desktop.ps1
+```
+
+Alternatively, `mvn javafx:run` uses the pinned JavaFX Maven plugin (its first use may download build tooling). JavaFX controls/graphics/base are pinned to 21.0.13; the Maven plugin is 0.0.8. The console JAR command below remains independent of JavaFX at runtime.
+
+Overview starts on the next weekday with four fictional appointments created through BookingFacade. All six destinations work: Overview, Appointments, New Appointment, Providers, Schedule and Activity. Use New Appointment to choose customer/provider/service, mode, date/time, add-ons and preparation policy; check availability, review the quote/UTC offset and book. New bookings are Pending until confirmed. Select a table row and View appointment (or press Enter/double-click) to inspect history and confirm, cancel, reschedule or complete when the domain permits. The elapsed seed demonstrates completion immediately.
+
+Search and status/provider filters cover all appointment dates. Schedule shows a duration-scaled day grid, with overlapping bookings side by side and cancelled entries hidden until Show cancelled is selected. Providers checks an exact time and starts a booking with the chosen provider. Activity separates audit and simulated notifications. Menu toggles the sidebar, which automatically collapses for compact windows. Tables retain their columns; longer content scrolls vertically. Form input is retained when returning from review or ordinary navigation; starting a new booking replaces the draft. Data resets when the process exits.
+
+Run `powershell -NoProfile -File scripts/run-desktop.ps1 -Verify` for retained Overview checks, or `-VerifyS7C` for the full UI journey plus grid geometry, overlap, keyboard scrolling and both-size checks. Add `-Capture` to `-VerifyS7C` to save raw Windows captures in `docs/ui-review/screenshots/S7C/`; launch only one AppointEase window during capture. These checks need an interactive Windows desktop. See [S7C review](docs/ui-review/S7C.md) for final evidence, exact screenshot paths and limitations; [S7B review](docs/ui-review/S7B.md) retains the earlier handoff. Local screenshots are ignored by Git and are not distributed with the source. S7C has passed visual review and is authorized for feature-branch publication only. Stop after publication; no main merge, academic ZIP regeneration or further feature is authorized.
 
 ## Build and run
 

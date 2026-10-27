@@ -1,5 +1,9 @@
 # Requirements baseline (S0)
 
+S7B authorization addendum (October 27, 2026): S7A is approved with refinements. The user explicitly authorized all six JavaFX views, booking/lifecycle interactions through existing services, compact layout refinements, regression/controller/Windows verification and raw local screenshots. This supersedes the historical S7A-only restriction below without changing F01-F11 or B01-B11. No new business rules, integrations, commits, pushes or academic ZIP changes. Stop after S7B for visual and functional review; evidence: [ui-review/S7B.md](ui-review/S7B.md).
+
+S7A authorization addendum (October 27, 2026): the user explicitly authorized a JavaFX presentation shell/theme and read-only Overview on feature/javafx-ui, superseding N08's historical no-GUI restriction only for this slice. Main retains shared service composition; DesktopMain owns JavaFX lifecycle. All business requirements and semantics below remain unchanged. Remaining desktop views and booking/lifecycle actions are S7B, requiring visual approval and explicit authorization. See [ui-review/S7A.md](ui-review/S7A.md). Main and the academic ZIP remain protected; no commits/pushes/uploads.
+
 This document is the requirements baseline. S1 implements domain validation, time/money values and State; S2 implements validated creation for both kinds and mode families plus composable add-on fee/instruction snapshots (domain portions of F03/F04); S3 implements repository-backed reserve/transition/reschedule, immutable chronological history, catalog reference checks and Strategy (F05-F08 foundation). S4 adds application browsing/booking/lifecycle Facade, immutable Observer events and simulated Calendar Adapter (F01-F10 application behavior). S5 implements the interactive console and deterministic seed catalog; see README and the S5 refinement below. Deadline: October 30, 2026.
 
 ## Functional requirements

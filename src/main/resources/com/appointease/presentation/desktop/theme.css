@@ -1,0 +1,160 @@
+.root {
+    -fx-font-family: "Segoe UI";
+    -fx-font-size: 13px;
+    -fx-base: #F5F3ED;
+    -fx-background: #F5F3ED;
+    -fx-text-background-color: #202A35;
+    -fx-focus-color: #202A35;
+    -fx-faint-focus-color: transparent;
+    -fx-accent: #7D927B;
+}
+.label { -fx-text-fill: #202A35; }
+.app-shell, .workspace-scroll, .workspace-scroll > .viewport { -fx-background-color: #F5F3ED; }
+.sidebar { -fx-background-color: #202A35; -fx-padding: 24 18 20 18; }
+.brand-block { -fx-padding: 0 0 19 0; }
+.brand { -fx-font-family: "Georgia"; -fx-font-size: 25px; -fx-text-fill: #F5F3ED; }
+.brand-caption { -fx-font-size: 8px; -fx-text-fill: #C4CCC9; }
+.button.nav-button {
+    -fx-background-color: transparent; -fx-text-fill: #D4DAD7;
+    -fx-padding: 10 16; -fx-background-radius: 3; -fx-border-radius: 3;
+    -fx-border-width: 0 0 0 3; -fx-border-color: transparent;
+}
+.button.nav-button.nav-selected { -fx-background-color: #35404A; -fx-text-fill: white; -fx-border-color: #C56B4E; }
+.button.nav-button:disabled { -fx-opacity: 1; -fx-text-fill: #A7B1B5; }
+.button.nav-button:hover { -fx-background-color: #35404A; }
+.button.nav-button:focused { -fx-border-color: #F5F3ED; -fx-border-width: 1; }
+.sidebar-footer { -fx-padding: 20 10 0 10; -fx-border-color: #46505A transparent transparent transparent; }
+.sidebar-caption { -fx-text-fill: #D2B49D; -fx-font-size: 10px; -fx-font-weight: bold; }
+.sidebar-note { -fx-text-fill: #C4CCC9; -fx-font-size: 11px; -fx-line-spacing: 4; }
+.topbar { -fx-padding: 10 28; -fx-background-color: #FCFBF8; -fx-border-color: transparent transparent #DDDCD5 transparent; }
+.breadcrumb { -fx-font-size: 12px; -fx-text-fill: #5B6469; }
+.workspace-badge { -fx-font-size: 10px; -fx-text-fill: #465F49; -fx-padding: 6 10; -fx-background-color: #E7ECE4; -fx-background-radius: 3; }
+.overview { -fx-padding: 20 28; }
+.overview.compact { -fx-padding: 20 24; }
+.page-title { -fx-font-family: "Georgia"; -fx-font-size: 32px; }
+.subtitle { -fx-text-fill: #5B6469; -fx-font-size: 13px; }
+.metrics { -fx-border-color: #D9D8D0 transparent #D9D8D0 transparent; -fx-border-width: 1; -fx-padding: 10 0; }
+.metric { -fx-padding: 0 16; -fx-border-color: transparent transparent transparent #D9D8D0; }
+.metric-value { -fx-font-family: "Georgia"; -fx-font-size: 28px; }
+.metric-label { -fx-font-size: 12px; -fx-font-weight: bold; }
+.metric-detail { -fx-font-size: 10px; -fx-text-fill: #626A6C; }
+.button {
+    -fx-background-color: #FCFBF8; -fx-background-radius: 3;
+    -fx-border-color: #CBCDC6; -fx-border-radius: 3; -fx-border-width: 1;
+    -fx-padding: 7 13; -fx-text-fill: #202A35; -fx-cursor: hand;
+}
+.button:hover { -fx-background-color: #E8E8DF; }
+.button:pressed { -fx-background-color: #D9DFD4; }
+.button:focused, .date-picker:focused { -fx-border-color: #202A35; -fx-border-width: 2; -fx-effect: null; }
+.button:disabled { -fx-cursor: default; }
+.button.quiet-button { -fx-background-color: transparent; -fx-padding: 5 10; }
+.date-picker { -fx-background-color: white; -fx-background-radius: 3; -fx-border-color: #CBCDC6; -fx-border-radius: 3; }
+.date-picker > .text-field { -fx-background-color: white; -fx-padding: 7 10; }
+.date-picker > .arrow-button { -fx-background-color: #F0F0E9; -fx-padding: 0 10; }
+.date-picker-popup { -fx-background-color: white; -fx-border-color: #AEB6AB; }
+.date-picker-popup .selected { -fx-background-color: #202A35; -fx-text-fill: white; }
+.section-title { -fx-font-family: "Georgia"; -fx-font-size: 21px; }
+.section-heading { -fx-padding: 0 0 17 0; }
+.appointment-list { -fx-background-color: #FFFFFF; -fx-border-color: #DDDED7; -fx-border-radius: 3; -fx-background-radius: 3; }
+.list-header { -fx-padding: 12 16; -fx-background-color: #EDEEE7; }
+.column-label { -fx-font-size: 9px; -fx-font-weight: bold; -fx-text-fill: #576259; }
+.appointment-row { -fx-padding: 12; -fx-min-height: 64; -fx-border-color: #E5E6E0 transparent transparent transparent; }
+.appointment-row:hover { -fx-background-color: #FAFAF5; }
+.row-primary { -fx-font-size: 13px; -fx-font-weight: bold; }
+.row-secondary { -fx-font-size: 12px; }
+.muted { -fx-font-size: 11px; -fx-text-fill: #626A6C; }
+.status { -fx-font-size: 10px; -fx-padding: 4 7; -fx-background-radius: 3; }
+.status-confirmed { -fx-background-color: #E8EEE4; -fx-text-fill: #38533B; }
+.status-pending { -fx-background-color: #F5E8DE; -fx-text-fill: #85442C; }
+.status-completed { -fx-background-color: #E9ECEE; -fx-text-fill: #394E5E; }
+.status-cancelled { -fx-background-color: #EEEEEB; -fx-text-fill: #626A6C; }
+.next-appointment { -fx-padding: 24 0 0 17; -fx-border-width: 0 0 0 3; -fx-border-color: #C56B4E; }
+.eyebrow { -fx-font-size: 10px; -fx-font-weight: bold; -fx-text-fill: #8B4630; }
+.next-title { -fx-font-family: "Georgia"; -fx-font-size: 21px; }
+.agenda { -fx-padding: 0 0 0 22; -fx-border-color: transparent transparent transparent #D9D8D0; }
+.compact .agenda { -fx-padding: 20 0 0 0; -fx-border-color: #D9D8D0 transparent transparent transparent; }
+.week-day { -fx-font-size: 11px; -fx-text-alignment: center; -fx-padding: 7 0; -fx-background-color: transparent; -fx-border-color: transparent; }
+.week-day.week-selected { -fx-background-color: #202A35; -fx-text-fill: #F5F3ED; }
+.timeline-hour { -fx-font-size: 10px; -fx-text-fill: #626A6C; }
+.timeline-line { -fx-background-color: #DEDFD6; }
+.time-block { -fx-background-color: #E1E8DC; -fx-border-color: #7D927B; -fx-border-width: 0 0 0 3; -fx-padding: 0 8; -fx-font-size: 10px; -fx-text-fill: #354B38; }
+.time-block-pending { -fx-background-color: #F1E1D7; -fx-border-color: #C56B4E; -fx-text-fill: #81442F; }
+.empty-state { -fx-padding: 65 24; -fx-alignment: center; }
+.empty-title { -fx-font-family: "Georgia"; -fx-font-size: 24px; }
+.scroll-bar:vertical { -fx-background-color: transparent; -fx-pref-width: 10; }
+.scroll-bar .thumb { -fx-background-color: #BDC4B8; -fx-background-radius: 3; }
+.scroll-bar .increment-button, .scroll-bar .decrement-button { -fx-padding: 2; -fx-background-color: transparent; }
+.tooltip { -fx-background-color: #202A35; -fx-text-fill: #FFFFFF; -fx-font-size: 12px; }
+
+/* S7B: native forms, readable data and consistent action hierarchy. */
+.page { -fx-padding: 22 28 30 28; }
+.button.primary-button { -fx-background-color: #A54F35; -fx-border-color: #A54F35; -fx-text-fill: white; -fx-font-weight: bold; }
+.button.primary-button:hover { -fx-background-color: #8B402B; }
+.button.primary-button:focused { -fx-border-color: #202A35; }
+.field-label { -fx-font-size: 12px; -fx-font-weight: bold; -fx-text-fill: #46514E; }
+.text-field, .combo-box { -fx-background-color: #FFFFFF; -fx-background-radius: 3; -fx-border-color: #BFC5BB; -fx-border-radius: 3; -fx-padding: 5 8; }
+.text-field:focused, .combo-box:focused, .check-box:focused { -fx-border-color: #202A35; -fx-border-width: 2; }
+.combo-box .list-cell { -fx-padding: 3 2; -fx-text-fill: #202A35; }
+.combo-box-popup .list-view { -fx-background-color: white; -fx-border-color: #BFC5BB; }
+.combo-box-popup .list-cell { -fx-padding: 8 12; -fx-background-color: white; }
+.combo-box-popup .list-cell:filled:hover, .combo-box-popup .list-cell:filled:selected { -fx-background-color: #E8EEE4; -fx-text-fill: #202A35; }
+.check-box { -fx-padding: 6 10 6 0; }
+.check-box .box { -fx-background-color: white; -fx-border-color: #7D927B; -fx-border-radius: 2; }
+.check-box:selected .mark { -fx-background-color: #38533B; }
+.quote { -fx-background-color: #E9EDE4; -fx-padding: 14 16; -fx-font-size: 14px; -fx-line-spacing: 5; }
+.detail-panel { -fx-background-color: #FFFFFF; -fx-border-color: #D9DCD3; -fx-padding: 20; }
+.confirmation-panel { -fx-background-color: #EDEEE7; -fx-padding: 16; -fx-border-color: #CCD2C5; }
+.confirmation-panel:empty { -fx-padding: 0; }
+.feedback-error { -fx-background-color: #F4E6DE; -fx-text-fill: #793A29; -fx-padding: 12 16; -fx-border-color: #C56B4E; -fx-border-width: 0 0 0 3; }
+.feedback-success { -fx-background-color: #E8EEE4; -fx-text-fill: #38533B; -fx-padding: 12 16; -fx-border-color: #7D927B; -fx-border-width: 0 0 0 3; }
+.history-row { -fx-padding: 12 0; -fx-border-color: #DDDED7 transparent transparent transparent; -fx-font-size: 12px; }
+.table-view { -fx-background-color: white; -fx-border-color: #D9DCD3; -fx-padding: 0; }
+.table-view .column-header-background, .table-view .column-header, .table-view .filler { -fx-background-color: #EDEEE7; }
+.table-view .column-header { -fx-padding: 10 8; -fx-border-color: transparent transparent #D9DCD3 transparent; }
+.table-view .column-header .label { -fx-alignment: center-left; -fx-font-size: 11px; -fx-text-fill: #46514E; }
+.table-row-cell { -fx-background-color: white; -fx-border-color: transparent transparent #E5E6E0 transparent; -fx-table-cell-border-color: transparent; }
+.table-row-cell:odd { -fx-background-color: #FAFAF7; }
+.table-row-cell:filled:selected { -fx-background-color: #E2E9DC; }
+.table-row-cell:filled:selected .table-cell { -fx-text-fill: #202A35; }
+.table-cell { -fx-padding: 8 10; -fx-alignment: center-left; -fx-font-size: 12px; }
+.table-view:focused { -fx-border-color: #202A35; }
+.button.schedule-entry { -fx-alignment: center-left; -fx-padding: 14 18; -fx-border-width: 0 0 0 3; -fx-border-color: #7D927B; -fx-background-color: #E8EEE4; }
+.button.schedule-pending { -fx-border-color: #C56B4E; -fx-background-color: #F5E8DE; }
+.button.schedule-cancelled { -fx-border-color: #88918A; -fx-background-color: #EEEEEB; }
+.button.schedule-completed { -fx-border-color: #586E7F; -fx-background-color: #E9ECEE; }
+.button.schedule-entry:focused { -fx-border-color: #202A35; -fx-border-width: 2; }
+.timeline-time { -fx-padding: 13 0; -fx-font-size: 12px; -fx-text-fill: #46514E; }
+.appointment-row:focused { -fx-border-color: #202A35; -fx-border-width: 2; }
+.muted, .metric-detail { -fx-font-size: 12px; }
+.row-secondary { -fx-font-size: 13px; }
+
+/* S7C: editorial hierarchy, restrained selection and a true time grid. */
+.optional-services { -fx-padding: 10 0 7 0; -fx-border-color: #D9D8D0 transparent #D9D8D0 transparent; }
+.price-summary { -fx-padding: 10 14; -fx-background-color: #E9EDE4; }
+.price-total-row { -fx-padding: 6 0 0 0; -fx-border-color: #CDD5C6 transparent transparent transparent; }
+.price-total { -fx-font-family: "Georgia"; -fx-font-size: 25px; }
+.appointment-when { -fx-padding: 0 0 0 12; -fx-border-color: #C56B4E; -fx-border-width: 0 0 0 3; }
+.appointment-date { -fx-font-family: "Georgia"; -fx-font-size: 23px; }
+.appointment-time { -fx-font-size: 19px; -fx-font-weight: bold; }
+.appointment-provider { -fx-font-size: 15px; }
+.button.danger-button { -fx-text-fill: #85442C; -fx-background-color: transparent; }
+.button.danger-button:hover { -fx-background-color: #F5E8DE; }
+.event-type { -fx-font-size: 14px; -fx-font-weight: bold; -fx-text-fill: #85442C; }
+.event-timestamp { -fx-font-size: 12px; -fx-text-fill: #626A6C; -fx-padding: 2 0 0 4; }
+.event-reference { -fx-font-size: 12px; -fx-text-fill: #46514E; }
+.table-row-cell:filled:hover { -fx-background-color: #F0F2EB; }
+.table-row-cell:filled:selected { -fx-background-color: #E8EDE3; -fx-border-color: transparent transparent #D9DFD4 #7D927B; -fx-border-width: 0 0 1 3; }
+.table-view:focused .table-row-cell:filled:selected { -fx-border-color: transparent transparent #D9DFD4 #202A35; }
+.grid-time { -fx-font-size: 12px; -fx-text-fill: #626A6C; }
+.grid-hour-line { -fx-background-color: #CDD2C7; }
+.grid-half-line { -fx-background-color: #E3E5DC; }
+.button.schedule-entry { -fx-padding: 3 8; -fx-background-radius: 2; -fx-border-radius: 0; -fx-alignment: top-left; }
+.button.schedule-entry:hover { -fx-background-color: #DCE5D7; }
+.button.schedule-pending:hover { -fx-background-color: #F0DDCD; }
+.button.schedule-cancelled { -fx-border-style: dashed; }
+.button.schedule-cancelled:hover, .button.schedule-completed:hover { -fx-background-color: #DDE1E2; }
+.grid-entry-title { -fx-font-size: 12px; -fx-font-weight: bold; }
+.grid-entry-detail { -fx-font-size: 11px; -fx-text-fill: #46514E; }
+.page.compact { -fx-padding: 18 20 24 20; }
+.compact .detail-panel { -fx-padding: 14; }
+.compact .appointment-date { -fx-font-size: 21px; }
