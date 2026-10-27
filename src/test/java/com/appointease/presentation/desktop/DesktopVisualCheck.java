@@ -42,9 +42,9 @@ public final class DesktopVisualCheck {
                         .anyMatch(label -> label.getText().startsWith("Updated at")), "Refresh feedback is visible");
                 var root = (DesktopShell) stage.getScene().getRoot();
                 ((Button) stage.getScene().lookup("#navigation-toggle")).fire();
-                require(root.getLeft() == null, "Navigation collapses");
+                require(!root.isNavigationExpanded() && root.getLeft() != null, "Navigation collapses to an icon rail");
                 ((Button) stage.getScene().lookup("#navigation-toggle")).fire();
-                require(root.getLeft() != null, "Navigation expands");
+                require(root.isNavigationExpanded(), "Navigation expands");
                 require(stage.getScene().getRoot().lookupAll(".nav-button").stream().noneMatch(n -> n.isDisabled()),
                         "All six S7B destinations are available");
                 stage.setWidth(1024 / stage.getOutputScaleX());

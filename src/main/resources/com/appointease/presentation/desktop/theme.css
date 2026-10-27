@@ -158,3 +158,22 @@
 .page.compact { -fx-padding: 18 20 24 20; }
 .compact .detail-panel { -fx-padding: 14; }
 .compact .appointment-date { -fx-font-size: 21px; }
+
+/* Sidebar refinement: native buttons and small vector strokes, in both navigation modes. */
+.navigation-icon-stroke { -fx-fill: transparent; -fx-stroke: #626A6C; -fx-stroke-width: 1.5; -fx-stroke-line-cap: round; -fx-stroke-line-join: round; }
+.sidebar .navigation-icon-stroke { -fx-stroke: #D4DAD7; }
+.sidebar .nav-selected .navigation-icon-stroke { -fx-stroke: #F5F3ED; }
+.button.sidebar-toggle { -fx-padding: 6; -fx-background-color: transparent; -fx-border-color: transparent; -fx-border-width: 1; -fx-background-radius: 3; -fx-border-radius: 3; }
+.button.sidebar-toggle .navigation-icon-stroke { -fx-stroke: #202A35; }
+.button.sidebar-toggle:hover { -fx-background-color: #EDEEE7; }
+.button.sidebar-toggle:pressed { -fx-background-color: #DDE3D7; }
+.button.sidebar-toggle:focused { -fx-border-color: #7D927B; -fx-border-width: 1; }
+.button.sidebar-toggle:focused .navigation-icon-stroke { -fx-stroke: #202A35; }
+.button.nav-button { -fx-padding: 8 10; -fx-border-width: 1 1 1 3; -fx-border-color: transparent; }
+.button.nav-button.nav-selected { -fx-border-color: transparent transparent transparent #C56B4E; }
+.button.nav-button:focused { -fx-border-width: 1 1 1 3; -fx-border-color: #F5F3ED; }
+.button.nav-button.nav-selected:focused { -fx-border-color: #F5F3ED #F5F3ED #F5F3ED #C56B4E; }
+.sidebar.sidebar-rail { -fx-padding: 24 8 20 8; }
+.sidebar-rail .button.nav-button { -fx-padding: 8 6; }
+.rail-brand { -fx-font-family: "Georgia"; -fx-font-size: 24px; -fx-text-fill: #F5F3ED; }
+.tooltip.navigation-tooltip { -fx-effect: null; -fx-background-radius: 3; -fx-text-fill: #F5F3ED; }

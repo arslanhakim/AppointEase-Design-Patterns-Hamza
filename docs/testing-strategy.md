@@ -1,5 +1,15 @@
 # Testing strategy
 
+## Final sidebar publication verification
+
+October 27, 2026: fresh `mvn clean verify` completed at 16:22:53 +05:00, exit 0, **289 tests, zero failures/errors/skips**, independently summed from XML; all five architecture checks pass. The unchanged compiled sidebar harness launched directly with motion enabled passed **86 assertions**, exit 0; `scripts/run-desktop.ps1 -VerifySidebar -ReduceMotion` passed **86**, exit 0. Retained `-VerifyS7C` passed **77**, `-Verify` passed **13**, and both console scripts passed with **nine successful JAR children**. Early GUI runs failed native-input assertions before later unchanged runs passed; Windows input automation reliability remains a limitation. No release source/assertion was changed or bypassed during publication. Final screenshots are user-approved; feature publication is authorized. Exact commands, failed attempts and pre-commit publication gates: [session history](SESSION_HISTORY.md).
+
+## Sidebar refinement verification addendum
+
+Final `mvn clean verify` completed October 27, 2026 at 15:52:03 +05:00, exit 0: **289 unchanged tests, zero failures/errors/skips**, independently summed from Surefire XML. All five architecture checks pass. `scripts/run-desktop.ps1 -VerifySidebar -Capture` and `-VerifySidebar -ReduceMotion` each exit 0 with **86 actual-window assertions**. Coverage includes native pointer/repeated toggles, Space/Enter, focus, tooltip display, rail destinations, preserved draft/review/selection/confirmation/scroll state, and all six views in both modes at both sizes. The new harness is opt-in, separate from Surefire. Only prior hidden-sidebar expectations in the two retained GUI harnesses changed to the requested rail behavior.
+
+Retained `-VerifyS7C`: exit 0, **77 assertions**; `-Verify`: exit 0, **13 assertions**. Console demo/QA: both exit 0, nine successful JAR children. Eleven real before/after PNGs pass signature/decode checks. The new Robot harness explicitly positions and foregrounds its test window; ordinary app launch behavior is unchanged. Exact screenshots, corrected intermediate checks, motion preference behavior and limits: [sidebar review](ui-review/sidebar-toggle.md). This was the historical local handoff; the later publication authorization and fresh results are recorded above.
+
 ## S7C visual verification addendum
 
 Final `mvn clean verify` completed October 27, 2026 at 13:46:19 +05:00, exit 0: **289 tests, zero failures/errors/skips**. All original test source bytes are preserved except the opt-in DesktopS7BCheck harness; no Surefire tests were removed or changed. All five architecture checks pass. No backend, facade/controller, composition, dependency or console changes in this slice.

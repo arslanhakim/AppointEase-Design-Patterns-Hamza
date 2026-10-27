@@ -32,13 +32,13 @@ public final class DesktopS7BCheck {
         check(() -> require(stage.isShowing(), "Actual DesktopMain window opened"));
         shot("01-overview-desktop", false);
         size(true);
-        check(() -> require(((DesktopShell) stage.getScene().getRoot()).getLeft() == null, "Compact sidebar automatically collapses"));
+        check(() -> require(!((DesktopShell) stage.getScene().getRoot()).isNavigationExpanded(), "Compact sidebar automatically becomes an icon rail"));
         shot("02-overview-compact", true);
         check(() -> {
             click("navigation-toggle");
-            require(((DesktopShell) stage.getScene().getRoot()).getLeft() != null, "Menu expands compact navigation");
+            require(((DesktopShell) stage.getScene().getRoot()).isNavigationExpanded(), "Toggle expands compact navigation");
             click("nav-appointments");
-            require(((DesktopShell) stage.getScene().getRoot()).getLeft() == null, "Choosing a compact destination releases content width");
+            require(!((DesktopShell) stage.getScene().getRoot()).isNavigationExpanded(), "Choosing a compact destination restores the rail");
             require(table().getItems().size() == 5, "Full history includes elapsed seed and four upcoming bookings");
         });
         shot("11-appointments-compact", true);

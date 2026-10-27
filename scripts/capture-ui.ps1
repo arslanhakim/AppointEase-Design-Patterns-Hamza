@@ -3,7 +3,7 @@ param(
     [string]$View = 'Desktop',
     [ValidatePattern('^[0-9]{2}-[a-z0-9-]+$')]
     [string]$S7BName,
-    [ValidateSet('S7B', 'S7C')]
+    [ValidateSet('S7B', 'S7C', 'sidebar-toggle', 'sidebar-icon-final')]
     [string]$Slice = 'S7B'
 )
 $ErrorActionPreference = 'Stop'
@@ -62,7 +62,7 @@ try {
         $point.X = $rect.Left + $offset
         $point.Y = $rect.Top + [int]($captureHeight / 2)
         $visibleRoot = [AppointEaseCapture]::GetAncestor([AppointEaseCapture]::WindowFromPoint($point), 2)
-        if ($visibleRoot -ne $handle) { throw 'AppointEase is obscured. No screenshot saved.' }
+        if ($visibleRoot -ne $handle) { throw "AppointEase is obscured at ($($point.X), $($point.Y)); visible handle $visibleRoot, expected $handle. No screenshot saved." }
     }
     # Raw visible window pixels only: no desktop-wide capture, crop editing, scaling or enhancement.
     $graphics.CopyFromScreen($rect.Left, $rect.Top, 0, 0, $bitmap.Size)
