@@ -54,11 +54,11 @@ powershell -NoProfile -File scripts/run-desktop.ps1
 
 Only Maven build/development commands may download dependencies. The packaged desktop runner and console runtime use local files and simulated integrations. Close the live desktop before rebuilding: Windows locks its JAR. Capture requires one AppointEase window and an interactive Windows desktop large enough for the requested outer dimensions. `-VerifyS7B` runs without captures; `-Capture` includes the same real interaction checks and captures. Harnesses close their own windows and leave no review window running.
 
-The original 272 Maven tests remain. DesktopControllerTest adds 17 invocations covering creation/quotes/retries, invalid/missing/unsupported input, review and post-review conflicts, preserved failed reschedules and successful moves, cancellation/reuse, confirmation/time-gated completion, filtering, navigation, refreshed projections, DST input, empty/broken activity suppliers and successful commit with delivery warnings. The compiled opt-in JavaFX harnesses are additional checks, not skipped JUnit tests. Final executed commands/counts/times are recorded in SESSION_HISTORY.md and PROJECT_MEMORY.md.
+The original 272 Maven tests remain. DesktopControllerTest adds 17 invocations covering creation/quotes/retries, invalid/missing/unsupported input, review and post-review conflicts, preserved failed reschedules and successful moves, cancellation/reuse, confirmation/time-gated completion, filtering, navigation, refreshed projections, DST input, empty/broken activity suppliers and successful commit with delivery warnings. The compiled opt-in JavaFX harnesses are additional checks, not skipped JUnit tests. Final executed commands/counts/times are recorded in [engineering history](../engineering-history.md) and [project status](../project-status.md).
 
 ## Raw local screenshots
 
-Final verification: `mvn clean verify` completed October 27 at 13:06:20 +05:00, exit 0, 289/0/0/0 tests/failures/errors/skips. Windows S7B capture journey: exit 0, 47 assertions; retained Overview journey: exit 0, 13 assertions. Both console QA scripts exit 0 with nine successful child processes. Final PNG signature/decoding/nonempty checks passed for all 13 files. Main/ZIP remain unchanged, staged diff empty, `git diff --check` exit 0. Full evidence and intermediate corrections are in SESSION_HISTORY.md.
+Final verification: `mvn clean verify` completed October 27 at 13:06:20 +05:00, exit 0, 289/0/0/0 tests/failures/errors/skips. Windows S7B capture journey: exit 0, 47 assertions; retained Overview journey: exit 0, 13 assertions. Both console QA scripts exit 0 with nine successful child processes. Final PNG signature/decoding/nonempty checks passed for all 13 files. Main/ZIP remain unchanged, staged diff empty, `git diff --check` exit 0. Full evidence and intermediate corrections are in engineering-history.md.
 
 Directory: `C:\dev\appointease\docs\ui-review\screenshots\S7B\`.
 
@@ -107,7 +107,7 @@ Tests/tooling:
 - Updated src/test/java/com/appointease/presentation/desktop/DesktopVisualCheck.java (all six destinations enabled instead of the S7A-only unavailable expectation; all other checks retained)
 - Updated scripts/run-desktop.ps1 and scripts/capture-ui.ps1
 
-Documentation: AGENTS.md, PROJECT_MEMORY.md, README.md, docs/SESSION_HISTORY.md, docs/architecture.md, docs/requirements.md, docs/design-pattern-matrix.md, docs/implementation-plan.md, docs/testing-strategy.md and this new docs/ui-review/S7B.md. The 13 ignored PNGs are additional local artifacts. Preexisting S7A files remain uncommitted and preserved; this inventory describes this slice, not the entire diff from main.
+Documentation: AGENTS.md, PROJECT_MEMORY.md, README.md, docs/engineering-history.md, docs/architecture.md, docs/requirements.md, docs/design-pattern-matrix.md, docs/implementation-plan.md, docs/testing-strategy.md and this new docs/ui-review/S7B.md. The 13 ignored PNGs are additional local artifacts. Preexisting S7A files remain uncommitted and preserved; this inventory describes this slice, not the entire diff from main.
 
 ## Limitations and next boundary
 

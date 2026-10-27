@@ -1,6 +1,6 @@
 # Architecture and implemented contracts
 
-Status: S0-S6.1 complete and preserved on main. S7A-S7C on feature/javafx-ui provide all six desktop views and existing booking/lifecycle operations, with the S7C visual polish approved for feature-branch publication. Stop after publication; no main merge or additional feature. The addenda below preserve historical slice boundaries. See ui-review/S7C.md for current presentation behavior and S6-AUDIT.md for historical qualifications.
+Status: S0-S6.1 are complete and preserved on main. S7A-S7C and the sidebar refinements are published on feature/javafx-ui, providing all six desktop views and existing booking/lifecycle operations. The addenda below preserve historical implementation stages. See [project status](project-status.md) for release verification, ui-review/S7C.md for presentation behavior and S6-AUDIT.md for historical qualifications.
 
 ## Implemented S1/S2 contracts
 
@@ -150,4 +150,4 @@ The dedicated Schedule is a time-ordered day timeline with individual entries fo
 
 ## S7C presentation refinement and publication handoff
 
-S7C supersedes the preceding Schedule presentation description: the dedicated day grid now positions entries by actual start Instant and elapsed duration, with reusable columns for overlapping intervals and default-hidden cancelled history. Pricing, status/selection, Activity and date/time/provider hierarchy are refined in the presentation layer only. No business rules, composition, dependencies or pattern implementations changed in S7C. User visual review is approved; source publication and fresh QA are authorized only on feature/javafx-ui. Exact behavior and limits: [S7C review](ui-review/S7C.md); publication evidence: [session history](SESSION_HISTORY.md).
+S7C supersedes the preceding Schedule presentation description: the dedicated day grid now positions entries by actual start Instant and elapsed duration, with reusable columns for overlapping intervals and default-hidden cancelled history. Pricing, status/selection, Activity and date/time/provider hierarchy are refined in the presentation layer only. No business rules, composition, dependencies or pattern implementations changed in S7C. The implementation is published on feature/javafx-ui. Exact behavior and limits: [S7C review](ui-review/S7C.md); publication evidence: [engineering history](engineering-history.md).

@@ -1,6 +1,6 @@
-# AppointEase session history
+# AppointEase engineering history
 
-Append dated records in chronological order. Preserve prior outcomes; add a correction if evidence changes. Keep current status in [PROJECT_MEMORY.md](../PROJECT_MEMORY.md). S0/S1 entries below were reconstructed from the existing source, conversation and [rubric evidence](rubric-evidence.md); the handoff entry records the fresh verification separately.
+Historical implementation decisions, verification results and known limitations. S0/S1 records were reconstructed from source and rubric evidence; later entries record the checks performed at each milestone. Historical filenames, package contents and release states describe their date, not the current tree. Historical review boundaries are archival records, not current development instructions. Current status: [project-status.md](project-status.md).
 
 ## 2026-10-26 — S0: architecture and project foundation
 
@@ -41,11 +41,9 @@ Append dated records in chronological order. Preserve prior outcomes; add a corr
 
 **Outstanding at close:** S2 must migrate direct construction to validated specs/creators/subtypes and paired mode families without weakening S1 invariants. No repository, strategy, atomic reservation/reschedule, event/revision mechanism, notification/calendar service, deterministic catalog or menu exists. AppointmentEvent is deferred to S4. PlantUML rendering and automated architecture checks remain pending. Existing files were untracked; no commits made. S2 was not authorized.
 
-## 2026-10-26 — S1 handoff and permanent session memory
+## 2026-10-26 — S1 baseline reverification
 
-**Authorization:** Documentation/handoff and verification only. The user approved S1, requested permanent memory, then asked to resume after a model-capacity interruption. Inspection on resumption found neither memory file present; no partial handoff content needed merging.
-
-**Files completed:** Created PROJECT_MEMORY.md and docs/SESSION_HISTORY.md; updated AGENTS.md with permanent start/resume/close rules. No Java, test, POM or S2 implementation changes.
+**Documentation:** Added historical development records. No Java, test, POM or S2 implementation changes.
 
 **Review:** Read AGENTS.md, Git status, source inventory, Appointment, all State classes, DomainTime, Money, Main, State tests and POM alongside architecture/pattern/slice/evidence documents. Source supports one implemented State pattern and eight planned patterns. Git lists existing project files as untracked and no tracked paths. The fresh build below confirms the historical 119-test claim.
 
@@ -61,15 +59,13 @@ Append dated records in chronological order. Preserve prior outcomes; add a corr
 
 The fresh verification required no code changes and confirmed the S1 baseline. Test reports are generated artifacts and remain ignored by Git.
 
-**Handoff boundary:** S0/S1 complete; no new development slice authorized. A fresh S2 session can resume from memory, source and tests after explicit authorization. Planned S2 covers Factory Method, Abstract Factory, Builder and Decorator, with construction-fixture migration and preserved immutable State behavior. Never infer authorization from the slice roadmap.
+**Historical next milestone:** S2 construction fixtures and creational patterns were still planned at this point; S1 immutable State behavior was to be preserved.
 
-**Outstanding:** No build/test blocker remains. PlantUML rendering remains unverified; the Git user-ignore warning persists. No commit authorized or made. The capacity interruption is user-reported; it is not evidence of a project/build failure.
+**Outstanding:** No build/test blocker remains. PlantUML rendering remains unverified; the Git user-ignore warning persists. No commit authorized or made.
 
 ## 2026-10-26 - S2: creational patterns and Decorator
 
-**Authorization:** User explicitly authorized S2 (Factory Method, Abstract Factory, Builder, Decorator), preservation of S1 and mandatory handoff. This supersedes the earlier handoff-only boundary. S3 remains unauthorized. No commits made.
-
-**Inspection:** Read AGENTS/memory/latest history, requirements, architecture, matrix, slice plan, testing/evidence/UML; inspected source, tests and Git. Existing project files were all untracked, and user-ignore permission warning remained. No existing files discarded. Initial edit script could not run because Python was unavailable; it made no changes. Node was used for local file edits.
+**Inspection:** Read AGENTS/memory/latest history, requirements, architecture, matrix, slice plan, testing/evidence/UML; inspected source, tests and Git. Existing project files were all untracked, and user-ignore permission warning remained. No existing files discarded.
 
 **Production files added** (relative to src/main/java/com/appointease/domain/):
 - creation/: AppointmentBuilder.java, AppointmentCreator.java, ConsultationAppointmentCreator.java, ServiceAppointmentCreator.java.
@@ -109,8 +105,6 @@ Final handoff review: scanned all 45 domain source files for imports outside JDK
 
 ## 2026-10-26 - S3: Strategy, scheduling and atomic reservations
 
-**Authorization:** User explicitly authorized S3 in this new coding session: Strategy, hard rules, application repository contracts, thread-safe in-memory atomic commands, tests and documentation handoff. This supersedes the S2 stop boundary. Stop after S3; S4 requires a new explicit authorization. No commits requested or made.
-
 **Initial inspection:** Read AGENTS.md, memory, latest history, requirements, architecture, pattern matrix, plan, testing/evidence and relevant UML. Inspected actual aggregate/spec/creator/state/time/interval/provider APIs, test fixtures, POM and Git. S2 source and its 156-test claim were confirmed by retained passing tests. All project files were already untracked; preserved them. Git user-ignore permission warning remains. Main/POM and all pre-existing tests were left unchanged.
 
 **New production files** (relative to src/main/java/com/appointease/):
@@ -126,7 +120,7 @@ Final handoff review: scanned all 45 domain source files for imports outside JDK
 
 One instance ReentrantLock protects all reads and full validation/replacement transactions. Capture Clock once under lock into fixed DomainTime. Build detached replacements and put only after success; no index synchronization issue because only one appointment map is maintained. Reschedule excludes only self and changes policy on successful explicit request; retains ID/subtype/State/family/add-ons/zone and original slot on failure. Finite transition commands delegate to existing State, preserving buffer. Nested writes from custom strategies are rejected to prevent reentrant snapshot invalidation. History is current appointment snapshots in start-then-ID order, not event history. No revision/event/queue/Facade/Observer/calendar implementation (Facade is planned S4).
 
-**Commands/results:** java -version exit 0 (Temurin 21.0.12.1+1-LTS); mvn -version exit 0 (3.9.16). Initial mvn clean verify at 19:43:03 +05:00 exit 0, 193 tests, no failures/errors/skips. Review added four invocations for containment, defensive catalogs and single clock capture; final mvn clean verify at 19:49:42 +05:00 exit 0, BUILD SUCCESS, **197 tests, 0 failures/errors/skips**. Final class totals: SchedulingTest 41, DomainModelTest 61, TimeAndMoneyTest 18, AppointmentTest 13, AppointmentStateTest 26, CreationPatternsTest 23, DecoratorTest 14, MainSmokeTest 1. Explicit java -jar target/appointease-0.1.0-SNAPSHOT.jar exit 0, exact welcome output. No Java/test changes after that build. One memory-file replacement patch was rejected before mutation; subsequent direct write succeeded, no project work lost.
+**Commands/results:** java -version exit 0 (Temurin 21.0.12.1+1-LTS); mvn -version exit 0 (3.9.16). Initial mvn clean verify at 19:43:03 +05:00 exit 0, 193 tests, no failures/errors/skips. Review added four invocations for containment, defensive catalogs and single clock capture; final mvn clean verify at 19:49:42 +05:00 exit 0, BUILD SUCCESS, **197 tests, 0 failures/errors/skips**. Final class totals: SchedulingTest 41, DomainModelTest 61, TimeAndMoneyTest 18, AppointmentTest 13, AppointmentStateTest 26, CreationPatternsTest 23, DecoratorTest 14, MainSmokeTest 1. Explicit java -jar target/appointease-0.1.0-SNAPSHOT.jar exit 0, exact welcome output. No Java/test changes after that build.
 
 **Documentation completed:** AGENTS.md, PROJECT_MEMORY.md, README.md, docs/requirements.md, architecture.md, design-pattern-matrix.md, implementation-plan.md, testing-strategy.md, rubric-evidence.md and this appended history. Updated docs/uml/overview.puml, lifecycle-sequence.puml, booking-sequence.puml; added scheduling-sequence.puml. The full booking sequence explicitly remains planned S4 orchestration; scheduling sequence describes implemented S3 behavior. No renderer validation claimed.
 
@@ -137,8 +131,6 @@ One instance ReentrantLock protects all reads and full validation/replacement tr
 Final handoff check: scanned 51 domain and 3 application source files for forbidden imports (0 findings), all source/docs for trailing whitespace (0 findings), and UML start/end delimiters (valid; not renderer validation). Git diff --check exited 0 but files remain untracked, so the separate source scan supplies whitespace evidence. Final Git status retained the existing untracked project structure and user-ignore warning. Documentation-only corrections followed the final passing build.
 
 ## 2026-10-26 - S4: Adapter, Facade, Observer and integrated booking
-
-**Authorization:** User explicitly authorized S4, all-nine-pattern integration, tests and mandatory handoff. Supersedes the S3 stop boundary. Stop after S4; S5 requires explicit authorization. No console menus, seeds, live services, frameworks, commits or AI attribution added.
 
 **Inspection:** Read AGENTS/memory/latest history, requirements/architecture/pattern matrix/plan/testing/evidence/UML; inspected actual Java creation/family/add-on/State/time/scheduling/repository APIs and tests. Existing repository had no event queue or revisions, confirming S3 handoff. All files were already untracked and preserved; Git user-ignore permission warning remains. No staging/commit.
 
@@ -174,8 +166,6 @@ Final handoff check: all source/document files scanned separately because Git fi
 
 ## 2026-10-26 - S5: console application, seed data and executed demonstration
 
-**Authorization/boundary:** User explicitly requested S5, superseding the old S4 stop condition. S5 complete; stop here. S6 final QA/submission remains unauthorized. No commit requested or made. All existing files were untracked at inspection and preserved; Git user-ignore permission warning persists.
-
 **Initial inspection:** Read AGENTS.md, PROJECT_MEMORY.md, latest history, architecture, pattern matrix, implementation plan, testing strategy and requirements. Inspected real facade/request/result/assembler APIs, domain models/modes/time/add-ons/exceptions, repository/event/observer/calendar wiring, fixtures/integration tests, Main/process smoke and POM. Fresh baseline verification confirmed all 236 S4 tests after a sandbox dependency-access failure and approved retry. Existing patterns were not inferred from reports alone.
 
 **Files created:**
@@ -203,15 +193,11 @@ DemoCatalog supplies three customers and four providers/services with stable nam
 - Script used 2026-10-27 (computed next weekday): online health 10:00 EUR 52.00 with both extras; duplicate-slot rejection; adjacent 10:30 booking; rejected buffered reschedule preserving 10:30; confirmed first booking, rescheduled to 11:30 buffered, cancelled and reused that slot; in-person salon EUR 20.00; completed elapsed seed; appointment, notification and audit histories. Four successful interactive bookings. Explicit exit plus both EOF paths show Goodbye. Full generated transcripts: target/demo-workflow.txt, target/demo-eof.txt, target/demo-partial-eof.txt.
 - Domain/application forbidden-import rg scans: no findings (rg exit 1 means no matches, not a failed application check). No permanent architecture test added. Git remains untracked with existing ignore warning; no commits.
 
-**Editing corrections:** An initial combined add/delete patch was rejected for duplicate Main target before any mutation and reapplied correctly. A documentation replacement script flattened single-pair arrays and temporarily replaced uppercase S in AGENTS/rubric text; the affected text was repaired and reread, preserving historical outcomes. No source or tests were affected. These editing errors are not reported as passing checks or product bugs.
-
 **Handoff/limits:** README contains build/run, timezone, complete catalog, menu use, lifecycle rules, shortcuts and repeatable demo instructions. Architecture and UML now show console/seed composition; UML source reviewed, not rendered. PROJECT_MEMORY is concise/current with links, actual outcomes and boundary. No known failing tested workflow or build blocker. Existing nondurable/unbounded process-local storage/logs and serialized delivery remain. Console supports exact-slot queries, not automatic slot discovery; invalid input restarts the operation; wide tables can wrap; English prompts only; notification records are simulated, not timed reminders. Exotic historical timezone changes and broad terminal compatibility are not comprehensively tested.
 
 **Recommended S6 only after authorization:** final requirements/pattern traceability audit, permanent architecture checks, UML rendering, broader terminal/timezone QA, regenerated demo evidence and submission packaging review. No S6 implementation or final submission started.
 
 ## 2026-10-27 - S6: independent final audit and submission preparation
-
-**Authorization and scope:** User explicitly authorized S6 final verification/documentation/packaging, superseding all old S5 stop conditions. Work began October 26 and crossed midnight in Asia/Karachi. S6 complete; stop here. No production Java, dependencies, features, commits or Moodle uploads changed. All preexisting repository files were untracked and preserved; user-level Git ignore warning persists.
 
 **Inspection and findings:** Read AGENTS.md, PROJECT_MEMORY.md, latest history, README, requirements, architecture, pattern matrix, testing strategy, rubric and implementation plan. Inspected actual source tree, creation/state/scheduling/assembler/facade/repository/dispatcher/observer/calendar/console/seed paths, tests and concurrency helpers, POM, demo and all six UML sources. Independently verified genuine behavioral participation of all nine patterns in the real lifecycle. No critical defect found. Qualifications: Builder is a fluent concrete variant without separate Director/abstract builder; product subtype differences are modest; Strategy varies preparation duration; calendar/notifications are simulated. No guaranteed mark.
 
@@ -242,8 +228,6 @@ First extraction `.submission-check/first` was a new empty directory. `mvn clean
 
 ## 2026-10-27 - S6.1: package dependency correction and release verification
 
-**Authorization:** Explicit user request for minimal cycle removal, architecture regression checks, behavior preservation, documentation/UML synchronization and regenerated submission. Stop after S6.1; no new features, dependencies, commits or Moodle upload. Fresh-session AGENTS/memory/latest history/audit/architecture/matrix/rubric/plan/testing/requirements/POM/source/tests/six UML/scripts/Git inspected. Existing files untracked, no tracked diff; preserved source with local .audit-tools/baseline snapshot. No unrelated work overwritten.
-
 **Baseline:** java -version and mvn -version exit 0 (Temurin 21.0.12.1, Maven 3.9.16). Sandbox mvn clean verify failed at 00:52:59 before compilation with getsockopt access denial (exit 1); approved retry completed 00:53:32 +05:00, exit 0, 264/0/0/0 tests/failures/errors/skips. Existing two architecture checks passed. jdeps class edges showed 18 packages, exactly four simple cycles in two cyclic components: domain model/state/mode/addon and application/event. Concrete class/import edges are recorded before refactoring in S6-AUDIT.md. These were real compile-time ownership cycles, not cyclic constructors or merely conceptual arrows.
 
 **Decisions:** Five aggregate-related classes (Appointment, ConsultationAppointment, ServiceAppointment, ValidatedAppointmentSpec, AppointmentRules) moved domain.model -> domain.appointment, preserving sealed/package-private construction relationships and lower shared model values. Command/receipt coordinator CommittedEventDispatcher moved application.event -> application; publisher/listener/failure contracts stay in event. Six FQCNs change; no method contracts or business logic changes, no wrappers/artificial interfaces. Migration preserves all nine patterns and full immutable identity/lifecycle/factory/decorator/strategy/repository/adapter/observer/facade semantics.
@@ -254,7 +238,7 @@ First extraction `.submission-check/first` was a new empty directory. `mvn clean
 
 **Runtime:** powershell -NoProfile -File scripts/demo.ps1 and scripts/verify-console.ps1 exit 0; nine packaged Java child exits 0. Demonstration uses next Vilnius weekday 2026-10-27: four bookings, overlap/adjacency/buffer failure and preservation, successful reschedule, cancellation/reuse, confirmation/completion, both families/kinds/fees, notification/audit histories, explicit exit, empty and mid-operation EOF. Additional QA covers malformed input recovery, UTC/Karachi seed completion. Offline runtime unchanged.
 
-**UML/docs:** Read all six sources. Overview relocates aggregate and dispatcher, moves relationships after declarations to avoid implicit old-package ownership, and updates boundary. Five sequence sources are unchanged; a trial ASCII title did not fix the SVG metadata decoder and was reverted. All six checkonly/SVG/PNG renders exit 0; updated overview visually reviewed without clipping. All six PNG embedded sources match PUML; six SVGs match independent fresh renders byte-for-byte. SVG metadata decoding was unreliable and is not claimed as verification. Early validation helper needed stdout/stderr UTF-8 handling; failed SVG decoding comparisons were not called passing. A handoff generator syntax error was corrected before it wrote any files. Documentation updates preserve original historical S6 results under explicit historical headings and document N02 resolution. Packaging script now requires handoff docs, relocated entrypoints and every UML source/render.
+**UML/docs:** Read all six sources. Overview relocates aggregate and dispatcher, moves relationships after declarations to avoid implicit old-package ownership, and updates boundary. Five sequence sources are unchanged; a trial ASCII title did not fix the SVG metadata decoder and was reverted. All six checkonly/SVG/PNG renders exit 0; updated overview visually reviewed without clipping. All six PNG embedded sources match PUML; six SVGs match independent fresh renders byte-for-byte. SVG metadata decoding was unreliable and is not claimed as verification. Early validation helper needed stdout/stderr UTF-8 handling; failed SVG decoding comparisons were not called passing. Documentation updates preserve original historical S6 results under explicit historical headings and document N02 resolution. Packaging script now requires handoff docs, relocated entrypoints and every UML source/render.
 
 **Changed/current files:**
 
@@ -319,8 +303,6 @@ This finalized memory/history/audit evidence is written BEFORE regenerating the 
 
 ## 2026-10-27 - GitHub publication and final local verification
 
-**Authorization:** User explicitly requested inspection, privacy/Git hygiene, private repository creation in the already authenticated GitHub account, fresh Maven/JAR verification, initial commit with exact message, main branch, push and remote verification. Supersedes prior no-commit/no-GitHub-publication boundary only for this task. No business logic, features, frontend development, Moodle upload, force-push or history replacement.
-
 **Initial state:** Read AGENTS.md, PROJECT_MEMORY.md, latest history, README, relevant architecture/pattern/academic docs, pom.xml and ignore rules. All 125 intended project files were untracked; unborn master, no commits/remotes/tracked files. Existing ignored S6.1 ZIP and local audit artifacts preserved. GitHub CLI 2.89.0 installed. Sandboxed gh auth status falsely reported an invalid credential; authorized outside-sandbox check succeeded using the keyring account arslanhakim. No token was requested or exposed. Initial requested-repository lookup reported nonexistent; created arslanhakim/AppointEase-Design-Patterns-Hamza as PRIVATE with the exact requested description and verified metadata. No preexisting remote content was modified.
 
 **Files prepared:** .gitignore expanded for Git metadata, target directories, IDE/editor state, local agent/audit/temp/extraction directories, logs, environment files, credentials/private keys and ZIPs. README retains JDK 21/Maven setup/build/run/demo instructions and adds a nine-pattern package map. AGENTS records narrow publication authorization. PROJECT_MEMORY and this history updated before commit. Historical host/user directory paths in PROJECT_MEMORY, S6-AUDIT, rubric-evidence and this history were replaced with repository-relative or external-temp references solely for privacy; original verification outcomes retained. No source/test/POM/UML/script behavior changed.
@@ -329,13 +311,9 @@ This finalized memory/history/audit evidence is written BEFORE regenerating the 
 
 **Actual verification before commit:** java -version exit 0 (Temurin 21.0.12.1+1-LTS); mvn -version exit 0 (Maven 3.9.16). mvn clean verify completed 01:44:41 +05:00, exit 0, BUILD SUCCESS, **267 tests, 0 failures/errors/skips**. Five architecture checks pass; all nine patterns and original concurrency tests retained. powershell -NoProfile -File scripts/verify-console.ps1 exit 0; all six packaged-JAR processes exit 0 and assert welcome/goodbye, explicit exit, empty/mid-operation EOF, malformed-input recovery, UTC and Karachi completion. Business code unchanged.
 
-**Publication record prepared before initial commit:** URL https://github.com/arslanhakim/AppointEase-Design-Patterns-Hamza; visibility PRIVATE; intended branch main; exact message Initial release: AppointEase appointment booking system. Stage only the reviewed allowlist, check staged bytes/names and whitespace, create initial commit, add origin, push without force, then compare local HEAD, tracking ref, GitHub main and remote advertised main. The commit cannot contain its own SHA or a future push result; actual final SHA and push verification will be emitted externally after execution. If authentication/permissions fail, stop and provide recovery instructions without claiming publication. Git commands/state are authoritative on resume.
-
 **Artifact/boundary:** Existing verified S6.1 submission ZIP unchanged and excluded from Git; its archived docs precede this publication-specific privacy/handoff update. Do not confuse it with the new GitHub snapshot. No academic ZIP regeneration or Moodle upload requested. Stop after publishing/verifying; further development needs explicit authorization.
 
 ## 2026-10-27 - S7A JavaFX shell and Overview visual prototype
-
-**Authorization/boundary:** User explicitly requested a premium JavaFX desktop in two controlled stages. S7A only authorizes architecture inspection, feature/javafx-ui branch, shared composition, theme/controls, shell and Overview, runnable visual prototype, real local screenshots, tests and handoff. Supersedes prior no-GUI/no-development boundaries only for S7A. Stop for visual approval; S7B remains unauthorized. No commits, pushes, screenshot uploads, ZIP regeneration or business-rule changes. Applied local emil-design-eng skill for layout/control polish; no delegation requested or used.
 
 **Initial evidence:** Read AGENTS.md, PROJECT_MEMORY.md, recent history, requirements, architecture, implementation plan, pattern matrix, testing strategy, POM and actual facade/seed/domain/console/test APIs. Clean main tracked origin/main at b8417e91960c3e632c16b2a3e1b14763445c5382. Existing submission ZIP SHA-256 D00D7E0F9FF82FBD49F6D4B0E27914AACBC90765A7E3541087D546F88A1D1A3A, 1,372,171 bytes. Creating feature/javafx-ui was blocked by sandbox Git-metadata restrictions; approved retry succeeded before edits. Java version and Maven version commands exit 0: Temurin 21.0.12.1, Maven 3.9.16, Windows 11. Git user-ignore permission warning remains.
 
@@ -375,9 +353,7 @@ Saved dimensions exclude Windows' invisible resize borders from the requested ou
 
 ## 2026-10-27 - S7B complete JavaFX desktop and functional review handoff
 
-**Authorization:** User approved S7A with refinements and explicitly requested complete JavaFX views, booking/lifecycle interactions using existing services, responsive editorial styling, focused tests, actual Windows launch/captures and handoff. Supersedes the historical S7A-only stop condition on feature/javafx-ui. Preserve main, all nine patterns, console and submission ZIP. Stop after S7B for visual and functional review. No commit, push, external screenshot upload, real integration, extra dependency, database or later slice authorized or performed.
-
-**Fresh-session evidence:** Read AGENTS.md, PROJECT_MEMORY.md, latest history, S7A review, requirements, architecture, implementation plan, pattern matrix and testing strategy. Inspected facade/request/result/time/appointment/mode/decorator/provider/seed/console APIs, actual desktop source/CSS/tests/scripts and Git state. Existing reports independently summed to 272/0/0/0; this was recorded as existing evidence, not a fresh initial test run. Branch already feature/javafx-ui with all S7A changes uncommitted/untracked; preserved them. Main/origin/main at b8417e91960c3e632c16b2a3e1b14763445c5382. ZIP size/hash recorded and rechecked at closure. Applied local emil-design-eng skill for practical layout/control polish; no delegation requested or used.
+**Fresh-session evidence:** Read AGENTS.md, PROJECT_MEMORY.md, latest history, S7A review, requirements, architecture, implementation plan, pattern matrix and testing strategy. Inspected facade/request/result/time/appointment/mode/decorator/provider/seed/console APIs, actual desktop source/CSS/tests/scripts and Git state. Existing reports independently summed to 272/0/0/0; this was recorded as existing evidence, not a fresh initial test run. Branch already feature/javafx-ui with all S7A changes uncommitted/untracked; preserved them. Main/origin/main at b8417e91960c3e632c16b2a3e1b14763445c5382. ZIP size/hash recorded and rechecked at closure.
 
 **Implemented:** All six destinations enabled. Overview gains prominent New Appointment, List/Schedule links and mouse/keyboard details. Appointments combines search/status/provider filters, all-date history, selection/Enter/double-click and details. Booking supports customer/provider/service/date/time/mode, priority/reminder decorators, preparation policy, advisory availability, quote/offset review, explicit reservation and saved Pending receipt. Back-to-edit preserves fields and visible validation. Details supports confirm/cancel/complete and reviewed reschedule with domain eligibility, state refresh and immutable event history. Providers shows service prices/durations/modes/hours/buffer, checks an exact time and prefills a provider booking. Schedule has date/provider navigation, selectable time-ordered status entries and empty states. Activity reads actual notification/audit supplier records, sequence ordering, channel filtering, timestamps, revisions, descriptions and saved delivery warnings with empty/error feedback.
 
@@ -462,7 +438,7 @@ Saved dimensions exclude Windows' invisible resize borders from the requested ou
 
 ## October 27, 2026 - S7C final JavaFX visual polish
 
-**Authorization and inspection:** User explicitly authorized a focused S7C visual refinement pass on feature/javafx-ui, superseding the S7B review boundary only for the requested Schedule, pricing, table status/selection, Activity, confirmation/details and responsive work, verification and local screenshots. Read AGENTS.md, PROJECT_MEMORY.md, latest history, S7B review, requirements/architecture/pattern docs, actual JavaFX/controller/test/scripts and Git status. Existing S7A/S7B changes were already uncommitted and were preserved. Used local emil-design-eng skill for spacing, hierarchy and focus; no delegation. No backend feature, rule, dependency, nine-pattern architecture change, commit, merge, push or ZIP change authorized or performed.
+**Scope:** S7C refined Schedule, pricing, table status/selection, Activity, confirmation/details and responsive layouts on feature/javafx-ui. Existing S7A/S7B changes were uncommitted and preserved. No backend feature, rule, dependency, nine-pattern architecture, main or ZIP change was made.
 
 **Implemented:** ScheduleView now lays out hour/half-hour lines and appointment blocks by actual elapsed start/duration (1.5 logical px/minute), with greedy reusable columns per connected overlap group. Default range 09:00-17:00 expands for outlying bookings. Cancelled entries hidden by default; Show cancelled, status legend/counts and dashed gray history retained alongside Pending terracotta, Confirmed sage and Completed blue-gray. Existing provider/date/list/details controls retained. Grid positions use Instants; UTC-offset labels are added for a displayed offset change, but DST-transition graphics were not independently certified.
 
@@ -473,7 +449,7 @@ BookingView groups optional services, itemizes existing quote fees and emphasize
 **Intermediate outcomes and fixes:**
 - Initial sandbox mvn clean verify failed before compilation at 13:28:08 +05:00 because dependency resolution was denied (getsockopt). Approved retry passed at 13:29:33: 289/0/0/0. This blocked check is not reported as passed.
 - Initial Windows capture journey passed 52 assertions, but visual inspection found hour labels autosized before CSS had zero dimensions and the expanded price summary displaced desktop form actions. Corrected axis sizing in layoutChildren and responsive field columns; shortened receipt and review spacing.
-- Next Maven verification passed at 13:38:27: 289/0/0/0. Expanded no-capture Windows checks passed geometry/overlap but failed the keyboard traversal assertion. The grid's focused-button toFront handler changed child traversal order; removed it and allowed normal ScrollPane keyboard traversal. Added visible-desktop-action and real EUR 52.00 total checks. A rejected multi-operation patch earlier failed before file mutation and was reapplied safely.
+- Next Maven verification passed at 13:38:27: 289/0/0/0. Expanded no-capture Windows checks passed geometry/overlap but failed the keyboard traversal assertion. The grid's focused-button toFront handler changed child traversal order; removed it and allowed normal ScrollPane keyboard traversal. Added visible-desktop-action and real EUR 52.00 total checks.
 
 **Final actual verification after all code/CSS/script changes:**
 - java -version and mvn -version: exit 0, Temurin 21.0.12.1 and Maven 3.9.16 on Windows 11.
@@ -492,8 +468,6 @@ BookingView groups optional services, itemizes existing quote fees and emphasize
 **Final handoff check:** git diff --check exit 0; separate changed untracked source/tooling/report trailing-whitespace check exit 0. Staged diff empty; S7C PNG ignore confirmed. All 27 exact screenshot paths verified present in S7C.md. Final source/script modification times precede the packaged JAR; only closing documentation changed afterward. Harness windows are closed. No later slice started.
 
 ## October 27, 2026 - Approved S7C feature-branch publication handoff
-
-**Authorization:** User explicitly approved the S7C visual review and requested inspection/privacy hygiene, fresh Maven and Windows/console verification, staging appropriate S7A-S7C source/tests/scripts/docs/assets, updating memory/history before the commit, the exact commit message `Add polished JavaFX appointment management interface`, push of feature/javafx-ui to the existing repository, remote/local SHA verification and then stop. This supersedes prior no-commit/no-push boundaries for this publication only. No merge into main, academic ZIP regeneration, screenshot upload or new feature.
 
 **Inspection/reconciliation:** Read AGENTS.md, PROJECT_MEMORY.md, latest history, S7A/S7B/S7C review evidence and relevant architecture/requirements/pattern documentation. Inspected actual tracked diffs, untracked inventory, shared composition/controller and desktop source/tests/scripts. Active branch feature/javafx-ui, initially at b8417e91960c3e632c16b2a3e1b14763445c5382 with an empty index. Reviewed 37 changed/new files: 13 tracked modifications and 24 additions. These are the authorized JavaFX dependency/tooling, Main shared composition, ApplicationContext/DesktopMain/desktop seed, presentation views/controller/CSS, focused tests/harnesses, desktop runner/capture scripts, ignore rule and S7A-S7C/publication documentation. No unrelated payload found. Protected domain/application/existing infrastructure/console/original behavior tests and console QA scripts have no tracked diff against main. No production/test/script changes during publication preparation; only current handoff/documentation authorization was reconciled. Architecture's current header and S7C addendum now distinguish the duration-scaled grid from the historical S7B rows.
 
@@ -518,7 +492,7 @@ BookingView groups optional services, itemizes existing quote fees and emphasize
 
 **Publication reconciliation:** The preceding entry was deliberately written before publication. That authorized publication subsequently completed: commit `400b1b7ec325c5fc5654e1ef0d400306fc9563f7`, message `Add polished JavaFX appointment management interface`, push exit 0. At 15:29 +05:00, the advertised remote feature SHA and GitHub branch API matched local HEAD; main remained `b8417e91960c3e632c16b2a3e1b14763445c5382`, and the ZIP hash/size were unchanged. Evidence remains in ignored .audit-tools/feature-publication-result.json. The latest sidebar request started from that clean published feature branch, not the older pre-commit snapshot.
 
-**New authorization and inspection:** User explicitly requested one focused sidebar UI change before any further publication, with actual Windows checks, before/after screenshots and memory/history updates, and explicitly prohibited commits, pushes and merges. Read AGENTS.md, PROJECT_MEMORY.md, latest history and relevant review/architecture documentation; inspected DesktopShell, DesktopMain, views/CSS, runner/capture scripts, tests and Git state. Used the emil-design-eng and animate skills for the quiet toolbar control and restrained motion. Stayed on feature/javafx-ui; no business logic, main or academic ZIP change. This local-only boundary supersedes the previous publication permission for the new changes.
+**Scope:** Focused sidebar refinement on feature/javafx-ui, with actual Windows checks and before/after screenshots. DesktopShell, DesktopMain, views/CSS, runner/capture scripts and tests were inspected. No business logic, main or academic ZIP change was made.
 
 **Implemented files and decisions:**
 - DesktopShell.java retains the sidebar and all six native navigation buttons in expanded 214-pixel or narrow 64-pixel modes. Expanded buttons show icon/text; rail buttons show icons and retain tooltips/accessibility. Current destination has a terracotta edge; focus is visibly distinct. Compact destination selection restores the rail. Toolbar Menu text is replaced by a native 36-pixel icon button with collapse/expand glyphs, matching accessible text/help and tooltip. No page is recreated when toggling, preserving draft/review/selection/lifecycle confirmation and scroll state.
@@ -546,7 +520,7 @@ BookingView groups optional services, itemizes existing quote fees and emphasize
 
 ## October 27, 2026 - Final sidebar toolbar icon correction
 
-**Authorization/inspection:** User approved sidebar behavior and authorized only a recognizable panel-left-close/open toolbar icon, approximately 18-20px with thin vector strokes, existing hover/focus/accessibility, regression verification and four real screenshots. No commits, pushes, merges, main/ZIP changes or redesign. Read AGENTS, memory, latest history and sidebar review; inspected the actual SVG paths, CSS, DesktopShell and capture/check scripts. Confirmed feature/javafx-ui and preserved all prior unstaged work. Initial source/script hashes are stored locally in ignored .audit-tools/sidebar-icon-final-before.csv.
+**Scope:** Sidebar icon correction used a recognizable panel-left-close/open toolbar icon, approximately 18-20px with thin vector strokes, preserving hover/focus/accessibility. Regression verification included four real screenshots. Prior unstaged work on feature/javafx-ui was preserved. Initial source/script hashes are stored locally in ignored .audit-tools/sidebar-icon-final-before.csv.
 
 **Correction:** NavigationIcon.java replaces the cramped chevron with a full directional arrow beside a narrower left panel: leftward for expanded/Collapse sidebar, rightward for collapsed/Expand sidebar. Rounded vector path bounds plus the existing 1.5px stroke occupy 19.5px. theme.css adds one toggle-scoped Ink stroke rule for legibility. The 22px holder, 36px native button, transparent rest, subtle hover, sage focus, accessible names/tooltips, motion and approved sidebar behavior are unchanged. No dependency, navigation-icon, DesktopShell, form, controller or business-rule change.
 
@@ -576,8 +550,6 @@ BookingView groups optional services, itemizes existing quote fees and emphasize
 
 ## October 27, 2026 - Final sidebar refinement publication preparation
 
-**Authorization and scope:** User visually approved the final sidebar-icon screenshots and explicitly authorized inspection, fresh Maven/JavaFX sidebar/console QA, privacy/artifact checks, memory/history updates, selective staging, commit `Refine JavaFX sidebar navigation and toggle icons`, push only to origin/feature/javafx-ui, and local/tracking/GitHub SHA verification. This supersedes the earlier local-only sidebar restrictions. Read AGENTS, memory, latest history, requirements, architecture, pattern matrix and sidebar review; inspected all pending source, harness, script and documentation changes. Active branch is feature/javafx-ui, starting HEAD/tracking/advertised remote SHA 400b1b7ec325c5fc5654e1ef0d400306fc9563f7; initial index empty.
-
 **Reviewed 14-file publication allowlist:**
 - Implementation/assets: src/main/java/com/appointease/presentation/desktop/DesktopShell.java, src/main/java/com/appointease/presentation/desktop/NavigationIcon.java, src/main/resources/com/appointease/presentation/desktop/theme.css.
 - GUI checks: src/test/java/com/appointease/presentation/desktop/DesktopSidebarCheck.java, DesktopS7BCheck.java and DesktopVisualCheck.java in that same directory.
@@ -598,6 +570,39 @@ These are the approved persistent icon rail, state-preserving accessible toggle,
 
 **Privacy/artifacts and protected state:** Candidate payload scanner reviewed 152 files (146 text, six unchanged academic UML PNGs), with zero targeted credential/private-key/token/credential-URL/assigned-secret/personal-profile-path/unwanted-artifact findings. It reports finding locations only, not potential secret values. Local screenshots, target, .audit-tools diagnostics, extracted submission checks and ZIP remain ignored; no captures were regenerated or uploaded. The initial sandbox ls-remote attempt failed network access; the escalated read succeeded. Local main, tracking main and advertised remote main remain b8417e91960c3e632c16b2a3e1b14763445c5382. Academic ZIP remains 1,372,171 bytes, SHA-256 D00D7E0F9FF82FBD49F6D4B0E27914AACBC90765A7E3541087D546F88A1D1A3A. Existing sandbox user-ignore warning is unrelated; repository ignore rules and explicit allowlist are checked.
 
-**Pre-commit publication gate:** This entry is intentionally written before its commit. It records completed QA and authorization, not a future push result or its own eventual SHA. Next stage only the 14 reviewed files, inspect exact staged names/content/whitespace and rerun the scanner on index blobs. Commit with the exact requested message, push only feature/javafx-ui without force, then compare local HEAD, origin/feature/javafx-ui, advertised remote feature SHA and the GitHub branch API. Reconfirm local/remote main, ZIP hash/size and clean tracked/untracked worktree. Store final commit/push/equality evidence in ignored .audit-tools/sidebar-publication-result.json and report it in the publication response; do not create an extra self-referential commit. Any failed final gate must be reported honestly.
+## October 27, 2026 - Repository hygiene and attribution audit
 
-**Stop boundary:** Stop after the verified feature-branch publication. No main merge, ZIP regeneration, additional feature or further publication is authorized.
+**Scope:** Repository cleanup and feature-branch publication only, using commit message `Clean repository tooling artifacts and project metadata`. No application feature, business-rule, pattern, source, test, CSS, Maven dependency, UML, main-branch or academic ZIP change.
+
+**Baseline and attribution:** Started with a clean feature/javafx-ui at 7de416eb1de201671d1bcec0bbd9fac44268500d, matching origin and GitHub. This confirms the preceding sidebar publication completed. Local/tracking/GitHub main matched b8417e91960c3e632c16b2a3e1b14763445c5382. Repository remains private with main as default branch and its existing academic description. All three existing commits were inspected, including full messages, authors and committers: arslanhakim <93035770+arslanhakim@users.noreply.github.com>. No Co-authored-by trailers, agent signatures or automated session metadata were found in commit messages. The configured Git identity is unchanged; no history rewriting or force-push is involved.
+
+**Cleanup inventory and reasons:**
+- Removed AGENTS.md: coding-agent execution and approval instructions, with no build/runtime requirement.
+- Removed PROJECT_MEMORY.md after consolidating current technical behavior, release SHAs, engineering evidence and limitations into docs/project-status.md and the existing technical documentation.
+- Renamed docs/SESSION_HISTORY.md to docs/engineering-history.md. Removed conversation interruptions, editing anecdotes, skill-use notes and redundant approval/execution instructions. Preserved implementation decisions, test counts, commands, failed checks, limitations and historical archive/file inventories. Historical filenames are retained for traceability, not as current dependencies.
+- Updated README and documentation references. Preserved all Java sources/tests, JavaFX CSS, POM, six UML diagram sets, academic documentation and application scripts.
+- Updated scripts/package-submission.ps1 to use the technical documentation, exclude local screenshots and agent configuration, and include the required JavaFX CSS. Evaluated its manifest/validation prefix without opening an archive: 151 existing files, exactly matching the intended source payload. No ZIP was created or regenerated.
+- No active .claude, CLAUDE.md, .codex, .cursor or .aider artifacts were present. Ignored .audit-tools and .submission-check contain historical AGENTS/memory/history copies and local helpers; these were retained along with screenshots, build outputs and the protected ZIP. Existing ignored files were not purged.
+
+**Ignore additions:** .claude/, .cursor/, .aider*, .continue/, .windsurf/, .gemini/, AGENTS.md, AGENTS.override.md, CLAUDE.md, GEMINI.md, .cursorrules, .cursorignore, .windsurfrules, .github/copilot-instructions.md, .github/instructions/, .github/prompts/, /PROJECT_MEMORY.md, /docs/SESSION_HISTORY.md, .cache/, .history/, *.session.log and *.session.jsonl. Existing .codex/, .agents/, audit/build/temp/log/ZIP/screenshot exclusions remain. All 23 new ignore probes passed using --no-index so tracked deletions did not mask the rules.
+
+**Fresh executed verification:**
+
+| Command/check | Actual result |
+| --- | --- |
+| java -version | Exit 0; Temurin 21.0.12.1 |
+| mvn -version | Exit 0; Maven 3.9.16 |
+| mvn clean verify | Exit 0; BUILD SUCCESS at 17:11:57 +05:00; 289 tests, 0 failures/errors/skips; independent Surefire XML sum agrees; five architecture checks pass |
+| powershell -NoProfile -File scripts/run-desktop.ps1 -VerifySidebar | Exit 0; 86 assertions; reducedMotion=false |
+| powershell -NoProfile -File scripts/run-desktop.ps1 -VerifySidebar -ReduceMotion | Exit 0; 86 assertions; reducedMotion=true |
+| powershell -NoProfile -File scripts/run-desktop.ps1 -VerifyS7C | Exit 0; 77 assertions |
+| powershell -NoProfile -File scripts/run-desktop.ps1 -Verify | Exit 0; 13 assertions |
+| powershell -NoProfile -File scripts/demo.ps1 | Exit 0; three packaged java -jar processes exit 0 |
+| powershell -NoProfile -File scripts/verify-console.ps1 | Exit 0; six packaged java -jar processes exit 0 |
+| Package script syntax and manifest | Passed; all 151 source payload files exist; CSS included; agent files and captures excluded; no archive written |
+| Documentation and historical evidence | Local Markdown links and whitespace checked; concrete historical verification lines retained, apart from documented removal of editing anecdotes |
+| Staged privacy/artifact scan | 151 files: 145 text, six existing UML PNGs; zero targeted credential/private-key/token/credential-URL/assigned-secret/personal-profile-path/unwanted-artifact findings |
+
+All four Windows harness launches passed on their first attempt in this audit and closed their windows. They cover the actual packaged application with cached JavaFX modules, including booking/lifecycle/conflicts, keyboard interactions, state preservation and supported window sizes. Prior native-input reliability and non-Windows/accessibility limitations remain historical limitations, not disproved by this run. Runtime remains offline. Network inspection and Git index writes initially encountered sandbox access restrictions; permitted retries succeeded. No application check failed or was weakened.
+
+**Protected artifacts and publication record:** Main remains b8417e91960c3e632c16b2a3e1b14763445c5382. The academic ZIP remains 1,372,171 bytes with SHA-256 D00D7E0F9FF82FBD49F6D4B0E27914AACBC90765A7E3541087D546F88A1D1A3A. This entry records completed pre-commit checks; the resulting cleanup SHA and push/local/tracking/GitHub equality are recorded after execution in the release report and ignored .audit-tools/hygiene-publication-result.json. Earlier commits, historical document references and ignored snapshot copies retain their original tooling metadata; no published history or academic archive was rewritten.

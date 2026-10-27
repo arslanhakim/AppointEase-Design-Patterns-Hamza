@@ -1,6 +1,6 @@
 # S7C final JavaFX visual polish
 
-Publication addendum, October 27: the user approved this visual review and authorized release QA, one commit and publication of feature/javafx-ui to the existing private repository. The following review preserves the pre-publication outcomes and restrictions as historical evidence. Current authorization and fresh verification are in PROJECT_MEMORY.md and the latest SESSION_HISTORY.md entry. All screenshots remain local and excluded from publication.
+Publication addendum, October 27: the user approved this visual review and authorized release QA, one commit and publication of feature/javafx-ui to the existing private repository. The following review preserves the pre-publication outcomes and restrictions as historical evidence. Current release status and verification are in [project status](../project-status.md) and [engineering history](../engineering-history.md). All screenshots remain local and excluded from publication.
 
 Completed October 27, 2026 on `feature/javafx-ui`, under the user's explicit S7C authorization. Focused visual refinement of the working S7B desktop. All work remains uncommitted. Stop after S7C; no later slice, merge, commit, push, external screenshot upload or academic ZIP regeneration is authorized.
 
@@ -47,7 +47,7 @@ Intermediate failures are recorded rather than counted as passes: the first sand
 - `src/main/resources/com/appointease/presentation/desktop/theme.css`.
 - `src/test/java/com/appointease/presentation/desktop/DesktopS7BCheck.java`: extended opt-in journey; original 289 Surefire tests retained.
 - `scripts/run-desktop.ps1`, `scripts/capture-ui.ps1`: S7C verification mode and separate capture destination; S7B captures preserved.
-- Documentation: AGENTS.md, PROJECT_MEMORY.md, README.md, docs/SESSION_HISTORY.md, docs/implementation-plan.md, docs/testing-strategy.md and this review.
+- Documentation: AGENTS.md, PROJECT_MEMORY.md, README.md, docs/engineering-history.md, docs/implementation-plan.md, docs/testing-strategy.md and this review.
 - 27 ignored local PNGs in the directory below. No generated/edited images or uploads.
 
 ## Protected state and limits

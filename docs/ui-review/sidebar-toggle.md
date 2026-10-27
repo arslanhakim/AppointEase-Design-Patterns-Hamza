@@ -1,10 +1,10 @@
 # Sidebar toggle refinement
 
-October 27, 2026. Completed locally on `feature/javafx-ui`, based on published commit `400b1b7ec325c5fc5654e1ef0d400306fc9563f7`. The original local refinement is documented below. The user subsequently approved the final sidebar-icon screenshots and authorized feature-branch publication; see the latest SESSION_HISTORY.md entry for fresh QA and publication gates. Main, business rules and the academic ZIP remain protected.
+October 27, 2026. Completed locally on `feature/javafx-ui`, based on published commit `400b1b7ec325c5fc5654e1ef0d400306fc9563f7`. The original local refinement is documented below. The user subsequently approved the final sidebar-icon screenshots and authorized feature-branch publication; see the latest engineering-history.md entry for fresh QA and publication gates. Main, business rules and the academic ZIP remain protected.
 
 ## Visual and interaction changes
 
-Final icon correction: the toolbar now uses a full leftward collapse arrow and rightward expand arrow beside a narrow left panel, with 19.5px visible bounds, 1.5px strokes and an Ink stroke color. The four final screenshots in `docs/ui-review/screenshots/sidebar-icon-final/` supersede the earlier toolbar glyph examples below and are visually approved. They remain local and ignored; the exact inventory and final verification are preserved in [session history](../SESSION_HISTORY.md).
+Final icon correction: the toolbar now uses a full leftward collapse arrow and rightward expand arrow beside a narrow left panel, with 19.5px visible bounds, 1.5px strokes and an Ink stroke color. The four final screenshots in `docs/ui-review/screenshots/sidebar-icon-final/` supersede the earlier toolbar glyph examples below and are visually approved. They remain local and ignored; the exact inventory and final verification are preserved in [engineering history](../engineering-history.md).
 
 | Before | After |
 | --- | --- |
@@ -60,7 +60,7 @@ Requested outer windows are 1440x900 and 1024x768. At the tested Windows 125% di
 
 ## Scope and limitations
 
-Changed implementation: DesktopShell.java, new NavigationIcon.java and theme.css. Tooling: run-desktop.ps1 and capture-ui.ps1. Verification: new DesktopSidebarCheck.java and minimal rail-expectation updates in DesktopVisualCheck.java/DesktopS7BCheck.java. Handoff: AGENTS.md, README.md, PROJECT_MEMORY.md, docs/SESSION_HISTORY.md, docs/testing-strategy.md and this review. No domain/application/infrastructure/console/composition/controller/dependency or existing JUnit-source change.
+Changed implementation: DesktopShell.java, new NavigationIcon.java and theme.css. Tooling: run-desktop.ps1 and capture-ui.ps1. Verification: new DesktopSidebarCheck.java and minimal rail-expectation updates in DesktopVisualCheck.java/DesktopS7BCheck.java. Handoff: AGENTS.md, README.md, PROJECT_MEMORY.md, docs/engineering-history.md, docs/testing-strategy.md and this review. No domain/application/infrastructure/console/composition/controller/dependency or existing JUnit-source change.
 
 Compact/lower forms and histories scroll vertically; supported-size checks found no horizontal overflow or clipped controls. The sidebar changes available content width once; responsive content reflows normally. Motion feel remains subjective and can be reviewed live using the runner. The OS preference is sampled only at startup, and screen-reader certification and other operating systems remain unverified. Existing S7C data-volume and process-local/simulated-integration limitations remain.
 

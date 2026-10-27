@@ -17,11 +17,11 @@ All four are real compiled package dependencies caused by responsibility groupin
 
 Chosen refactor: move Appointment, ConsultationAppointment, ServiceAppointment, ValidatedAppointmentSpec and their intrinsic AppointmentRules into domain.appointment. This leaves the existing domain.model as the stable shared values/catalog package rather than relocating many widely used value types. Move the application command/delivery coordinator into application. Six fully qualified class names necessarily change; public method shapes, validation, constructor visibility, sealed relationships and behavior remain intact. Update consumers and documentation together. No compatibility wrappers are retained because they would reintroduce the cycles. Factory Method products and Builder spec imports migrate; all nine pattern roles and collaborations remain unchanged.
 
-Verification and release results are recorded in the S6.1 closing entry below and SESSION_HISTORY.md.
+Verification and release results are recorded in the S6.1 closing entry below and engineering-history.md.
 
 ## Historical S6 scope (superseded by S6.1)
 
-Audit conducted October 26-27, 2026, for the October 30 deadline. User explicitly authorized final verification, documentation and packaging only. No feature development, production Java changes, dependency changes, commits or uploads were made. Historical slice evidence remains in SESSION_HISTORY.md; this report supersedes earlier readiness claims.
+Audit conducted October 26-27, 2026, for the October 30 deadline. User explicitly authorized final verification, documentation and packaging only. No feature development, production Java changes, dependency changes, commits or uploads were made. Historical slice evidence remains in engineering-history.md; this report supersedes earlier readiness claims.
 
 ## Pattern verdict
 
@@ -75,7 +75,7 @@ java -jar path/to/plantuml.jar -tsvg docs/uml/*.puml
 java -jar path/to/plantuml.jar -tpng docs/uml/*.puml
 ```
 
-Final command outcomes and packaging evidence are recorded in [rubric-evidence.md](rubric-evidence.md) and [SESSION_HISTORY.md](SESSION_HISTORY.md). The assessment table is a completed evidence draft, not a promised grade.
+Final command outcomes and packaging evidence are recorded in [rubric-evidence.md](rubric-evidence.md) and [engineering-history.md](engineering-history.md). The assessment table is a completed evidence draft, not a promised grade.
 
 
 ## S6.1 regression and release verification
@@ -95,4 +95,4 @@ All six PlantUML sources pass checkonly and SVG/PNG rendering (exit 0). Overview
 
 ### S6.1 extraction and release closure
 
-Candidate archive: 125 entries verified against source; new external extraction <external-temp>/AppointEase-S6.1/candidate. Clean verify at 01:05:21 +05:00, exit 0, 267/0/0/0. Extracted demo and console QA both exit 0; all nine Java children exit 0. Sandbox script launches initially failed on directory access before Java; approved retry passed. All payload bytes match workspace. 113 text files have zero trailing whitespace. Final handoff is frozen before final regeneration and another external extraction/build/runtime verification; exact final ZIP identity and repeated outcomes are emitted externally to avoid changing the archive after verification. See SESSION_HISTORY.md for the explicit release protocol and actual candidate results. No new feature, business-rule/dependency change, commit or upload. Stop after S6.1.
+Candidate archive: 125 entries verified against source; new external extraction <external-temp>/AppointEase-S6.1/candidate. Clean verify at 01:05:21 +05:00, exit 0, 267/0/0/0. Extracted demo and console QA both exit 0; all nine Java children exit 0. Sandbox script launches initially failed on directory access before Java; approved retry passed. All payload bytes match workspace. 113 text files have zero trailing whitespace. Final handoff is frozen before final regeneration and another external extraction/build/runtime verification; exact final ZIP identity and repeated outcomes are emitted externally to avoid changing the archive after verification. See engineering-history.md for the explicit release protocol and actual candidate results. No new feature, business-rule/dependency change, commit or upload. Stop after S6.1.

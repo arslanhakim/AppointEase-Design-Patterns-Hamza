@@ -1,6 +1,6 @@
 # AppointEase
 
-Java 21 / Maven academic appointment booking application. **S0-S6.1 console complete; all nine GoF patterns integrated and independently audited.** See docs/S6-AUDIT.md for historical findings and qualifications. The feature/javafx-ui branch adds the separately authorized S7B JavaFX desktop. Both entry points run offline; only the desktop requires JavaFX.
+Java 21 / Maven academic appointment booking application. **S0-S6.1 console complete; all nine GoF patterns integrated and independently audited.** See docs/S6-AUDIT.md for historical findings and qualifications. The feature/javafx-ui branch adds the S7A-S7C JavaFX desktop and sidebar refinements. Both entry points run offline; only the desktop requires JavaFX.
 
 ## JavaFX desktop (S7B with S7C visual polish)
 
@@ -16,7 +16,7 @@ Overview starts on the next weekday with four fictional appointments created thr
 
 Search and status/provider filters cover all appointment dates. Schedule shows a duration-scaled day grid, with overlapping bookings side by side and cancelled entries hidden until Show cancelled is selected. Providers checks an exact time and starts a booking with the chosen provider. Activity separates audit and simulated notifications. The toolbar's sidebar icon switches between labeled navigation and a narrow icon rail with tooltips; compact windows default to the rail. Toggling preserves the current page, input and selection. Space and Enter activate the focused toggle. Tables retain their columns; longer content scrolls vertically. Form input is retained when returning from review or ordinary navigation; starting a new booking replaces the draft. Data resets when the process exits.
 
-Run `powershell -NoProfile -File scripts/run-desktop.ps1 -Verify` for retained Overview checks, or `-VerifyS7C` for the full UI journey plus grid geometry, overlap, keyboard scrolling and both-size checks. Add `-Capture` to `-VerifyS7C` to save raw Windows captures in `docs/ui-review/screenshots/S7C/`; launch only one AppointEase window during capture. Use `-VerifySidebar` for sidebar interactions, optionally with `-Capture` for `docs/ui-review/screenshots/sidebar-toggle/`. The runner reads the Windows animation preference at startup; `-ReduceMotion` explicitly disables the short pointer-activated icon fade. Keyboard activation and direct launches without an animation preference are immediate. These checks need an interactive Windows desktop. See [sidebar review](docs/ui-review/sidebar-toggle.md), [S7C review](docs/ui-review/S7C.md) and [S7B review](docs/ui-review/S7B.md) for evidence and limitations. Local screenshots are ignored by Git and are not distributed with the source. S7C was published on the feature branch. The final sidebar icons are visually approved and authorized for feature-branch publication; see the latest session history for release verification. Stop after publication; no merge into main, academic ZIP regeneration or further feature is authorized.
+Run `powershell -NoProfile -File scripts/run-desktop.ps1 -Verify` for retained Overview checks, or `-VerifyS7C` for the full UI journey plus grid geometry, overlap, keyboard scrolling and both-size checks. Add `-Capture` to `-VerifyS7C` to save raw Windows captures in `docs/ui-review/screenshots/S7C/`; launch only one AppointEase window during capture. Use `-VerifySidebar` for sidebar interactions, optionally with `-Capture` for `docs/ui-review/screenshots/sidebar-toggle/`. The runner reads the Windows animation preference at startup; `-ReduceMotion` explicitly disables the short pointer-activated icon fade. Keyboard activation and direct launches without an animation preference are immediate. These checks need an interactive Windows desktop. See [sidebar review](docs/ui-review/sidebar-toggle.md), [S7C review](docs/ui-review/S7C.md) and [S7B review](docs/ui-review/S7B.md) for evidence and limitations. Local screenshots are ignored by Git and are not distributed with the source. The desktop and final sidebar refinements are published on the feature branch. See [project status](docs/project-status.md) and [engineering history](docs/engineering-history.md) for release verification and limitations. The academic console submission ZIP is a separate, unchanged artifact.
 
 ## Build and run
 
@@ -96,7 +96,7 @@ UI limits: exact-slot availability queries (no automatic slot search), no editin
 - [Requirements](docs/requirements.md), [architecture](docs/architecture.md), [pattern matrix](docs/design-pattern-matrix.md)
 - [Implementation plan](docs/implementation-plan.md), [testing strategy](docs/testing-strategy.md), [rubric evidence](docs/rubric-evidence.md)
 - [UML overview](docs/uml/overview.puml), [console sequence](docs/uml/console-sequence.puml)
-- [Project memory](PROJECT_MEMORY.md), [session history](docs/SESSION_HISTORY.md)
+- [Project status](docs/project-status.md), [engineering history](docs/engineering-history.md)
 
 Pinned tooling: Jupiter 5.13.4; Maven clean 3.4.1, resources 3.3.1, compiler 3.14.1, Surefire 3.5.4, jar 3.4.2. No dependencies or plugin versions changed in S5.
 

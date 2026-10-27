@@ -31,9 +31,32 @@ Thumbs.db
 *.tmp
 *.bak
 *.zip
-# Local agent state
+# Local AI tooling and session state
 .codex/
 .agents/
+.claude/
+.cursor/
+.aider*
+.continue/
+.windsurf/
+.gemini/
+AGENTS.md
+AGENTS.override.md
+CLAUDE.md
+GEMINI.md
+.cursorrules
+.cursorignore
+.windsurfrules
+.github/copilot-instructions.md
+.github/instructions/
+.github/prompts/
+/PROJECT_MEMORY.md
+/docs/SESSION_HISTORY.md
+# Development caches and temporary sessions
+.cache/
+.history/
+*.session.log
+*.session.jsonl
 # Environment, credentials and private keys
 .env
 .env.*

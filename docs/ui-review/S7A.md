@@ -114,7 +114,7 @@ Modified:
 - docs/design-pattern-matrix.md
 - docs/implementation-plan.md
 - docs/testing-strategy.md
-- docs/SESSION_HISTORY.md
+- docs/engineering-history.md
 
 The three ignored PNGs listed above are additional local review artifacts. No existing file was deleted; no submission archive or UML artifact was regenerated. Historical UML describes the preserved console baseline; the S7A composition extension is documented here and in architecture.md.
 

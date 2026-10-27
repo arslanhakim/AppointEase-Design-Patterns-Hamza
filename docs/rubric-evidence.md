@@ -29,7 +29,7 @@ Requirements coverage: F01-F02 browse/advisory availability and F11 input/EOF ->
 | PlantUML initial validation/render | Exit 1 check / 200 render; lifecycle sequence invalid note syntax, then fixed |
 | PlantUML final validation/SVG/PNG | Exit 0 for all six; visually reviewed; layout corrected to prevent overview PNG clipping |
 
-No production Java or dependency changes in S6. ArchitectureTest adds two invocations to the retained 262. Local target reports/transcripts are reproducible and excluded from the ZIP. Packaging and final handoff evidence appears in SESSION_HISTORY.md and PROJECT_MEMORY.md.
+No production Java or dependency changes in S6. ArchitectureTest adds two invocations to the retained 262. Local target reports/transcripts are reproducible and excluded from the ZIP. Packaging and release evidence appears in [engineering history](engineering-history.md) and [project status](project-status.md).
 
 Fresh-extraction verification: `.submission-check/first`, October 27 at 00:13:28 +05:00, `mvn clean verify` exit 0, 264 tests, zero failures/errors/skips. Extracted demo and standalone console QA scripts both exit 0; all nine child processes exit 0. The 125-entry ZIP is rebuilt after documentation-only handoff updates and every archive entry is compared byte-for-byte by SHA-256 against the workspace source. Production/test Java, POM and scripts are unchanged from this verified extraction. No claim of a fresh Maven cache or another operating system is made.
 
@@ -46,7 +46,7 @@ Historical status at the end of S5: S0-S5 complete (9/9 patterns, interactive co
 | Atomicity/time correctness (B03–B11, N03–N04) | S1 actual interval/DST/money/time-boundary tests and immutable transition results; S3 repository lock/atomic reservation and SchedulingTest controlled races/original-reservation preservation | S4 event ordering |
 | UML/design rationale (N07) | overview.puml shows actual S1-S3 model; scheduling-sequence.puml shows S3 atomic commands; creation-sequence.puml shows S2 assembly; lifecycle-sequence.puml actual State behavior; booking-sequence.puml explicitly future; alternatives in pattern matrix | Rendered diagrams and final source reconciliation in S6 |
 | Notifications/audit/calendar (F09–F10, N05) | Ordered delivery/failure/translation specification | S4 success-only events, failing observer/calendar integration evidence |
-| Maintainability and limits (N08) | AGENTS.md, README, pinned tools; no runtime dependencies | Final review and offline console run |
+| Maintainability and limits (N08) | README, architecture.md, pinned tools; offline console runtime | Final review and offline console run |
 
 ## S1 verification and actual evidence (October 26, 2026)
 
@@ -131,7 +131,7 @@ This entry supersedes historical S1 statements that S2 was not authorized. S2 wa
 
 Source evidence: domain/creation/{AppointmentCreator,ConsultationAppointmentCreator,ServiceAppointmentCreator,AppointmentBuilder}; domain/mode/{AppointmentModeFactory,OnlineModeFactory,InPersonModeFactory,MeetingDetails,ParticipationInstructions,AppointmentModeDetails}; domain/addon/{AppointmentService,BaseAppointmentService,AppointmentServiceDecorator,PriorityBookingDecorator,ReminderServiceDecorator,BookingEnhancements}; domain/model/{ValidatedAppointmentSpec,AppointmentRules,Appointment,ConsultationAppointment,ServiceAppointment}. All names refer to Java files.
 
-F03/F04 domain construction/composition now has executable evidence; catalog resolution, persistence, user-facing booking and display remain future. Public spec construction validates fully; creator and subtype enforce kind. S1 assertions were preserved using migrated construction fixtures. Main and POM unchanged. Full file inventory, design refinements and verification chronology are in SESSION_HISTORY.md.
+F03/F04 domain construction/composition now has executable evidence; catalog resolution, persistence, user-facing booking and display remain future. Public spec construction validates fully; creator and subtype enforce kind. S1 assertions were preserved using migrated construction fixtures. Main and POM unchanged. Full file inventory, design refinements and verification chronology are in engineering-history.md.
 
 No build blockers. Source review is not a permanent automated architecture test. PlantUML rendering remains deferred. Git files were already untracked, so diff --check alone does not validate the changed inventory. No commits made. S3 requires explicit authorization.
 
@@ -202,7 +202,7 @@ No known failing tested workflows. Limitations: process-local state/unbounded lo
 
 ## S6.1 current verification
 
-Original 264 tests retained; three architecture tests added, for 267 tests with zero failures/errors/skips. Package graph: 19 packages, zero cycles. Domain/application/infrastructure/presentation directions and composition-root boundary pass. Original four package cycles and exact migration decisions are in S6-AUDIT.md. Source/extraction builds, packaged demo/EOF/console QA, UML rendering and archive evidence are recorded in the S6.1 SESSION_HISTORY.md entry; prior S6 results above remain historical evidence.
+Original 264 tests retained; three architecture tests added, for 267 tests with zero failures/errors/skips. Package graph: 19 packages, zero cycles. Domain/application/infrastructure/presentation directions and composition-root boundary pass. Original four package cycles and exact migration decisions are in S6-AUDIT.md. Source/extraction builds, packaged demo/EOF/console QA, UML rendering and archive evidence are recorded in the S6.1 engineering-history.md entry; prior S6 results above remain historical evidence.
 
 
-S6.1 external candidate extraction: <external-temp>/AppointEase-S6.1/candidate; clean verify October 27 at 01:05:21 +05:00, exit 0, 267 tests, zero failures/errors/skips. Extracted demo/console QA exit 0, nine Java child exits 0. Final handoff changes are repackaged and the final archive repeats the same checks; final identity and outcomes are emitted externally without rewriting archived documents. See SESSION_HISTORY.md.
+S6.1 external candidate extraction: <external-temp>/AppointEase-S6.1/candidate; clean verify October 27 at 01:05:21 +05:00, exit 0, 267 tests, zero failures/errors/skips. Extracted demo/console QA exit 0, nine Java child exits 0. Final handoff changes are repackaged and the final archive repeats the same checks; final identity and outcomes are emitted externally without rewriting archived documents. See engineering-history.md.

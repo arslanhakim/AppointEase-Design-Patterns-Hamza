@@ -1,6 +1,6 @@
 # Implementation slices
 
-S0 through S6.1 and S7A-S7C are complete. S7C passed visual review on October 27; the user authorized fresh release QA and publication of feature/javafx-ui using the specified commit message. Stop after feature-branch publication; no further slice, main merge or submission ZIP change is authorized. Historical boundaries below describe their original slice. See [S7C review](ui-review/S7C.md), [S7B review](ui-review/S7B.md), the historical [S7A screen map](ui-review/S7A.md) and [publication history](SESSION_HISTORY.md).
+S0 through S6.1, S7A-S7C and the sidebar refinements are complete. The desktop is published on feature/javafx-ui; main and the separate academic console ZIP retain the console baseline. Historical boundaries below describe their original implementation stages. See [project status](project-status.md), [S7C review](ui-review/S7C.md), [S7B review](ui-review/S7B.md), the historical [S7A screen map](ui-review/S7A.md) and [publication history](engineering-history.md).
 
 | Slice | Proposed scope | Acceptance criteria / exit gate |
 | --- | --- | --- |
@@ -18,21 +18,21 @@ Historical S2/S3 exit evidence (superseded by S4 below): 156 tests passed (119 o
 
 ## S4 exit boundary
 
-All nine patterns are executable through BookingFacade; Adapter and Observer integrate with atomic event/revision recording. Main/POM and original tests remain unchanged. S5 may add only explicitly authorized console parsing/rendering, seed catalog and Main composition, sharing one dispatcher per repository. No S5 code was implemented. Final verification is recorded in SESSION_HISTORY.md and rubric-evidence.md.
+All nine patterns are executable through BookingFacade; Adapter and Observer integrate with atomic event/revision recording. Main/POM and original tests remain unchanged. S5 may add only explicitly authorized console parsing/rendering, seed catalog and Main composition, sharing one dispatcher per repository. No S5 code was implemented. Final verification is recorded in engineering-history.md and rubric-evidence.md.
 
 ## S5 exit boundary (supersedes historical S4 boundary above)
 
-S5 explicitly authorized and complete October 26: Main composition, ConsoleInput/ConsoleApplication, DemoCatalog/DemoSeed, 26 deterministic console test invocations, migrated process EOF smoke, and repeatable packaged demo script. All 11 operations and exit implemented through the facade, with seed completion and graceful EOF. Final clean verify: 262 tests, 0 failures/errors/skips, exit 0. Packaged workflow and two EOF processes exit 0; details in SESSION_HISTORY.md. No commits.
+S5 explicitly authorized and complete October 26: Main composition, ConsoleInput/ConsoleApplication, DemoCatalog/DemoSeed, 26 deterministic console test invocations, migrated process EOF smoke, and repeatable packaged demo script. All 11 operations and exit implemented through the facade, with seed completion and graceful EOF. Final clean verify: 262 tests, 0 failures/errors/skips, exit 0. Packaged workflow and two EOF processes exit 0; details in engineering-history.md. No commits.
 
 Stop after S5. Recommended S6 only upon explicit authorization: final requirement/pattern evidence audit, rendered UML, permanent architecture regression checks, broader terminal/timezone QA and submission packaging. Do not interpret this recommendation as authorization.
 
 ## S6 final boundary (supersedes all earlier stop conditions)
 
-Explicitly authorized by the user and completed October 26-27, 2026: independent nine-pattern and architecture audit, two automated architecture checks, all six UML sources corrected/rendered, 100-point traceability and Moodle evidence draft, demonstration walkthrough, packaged console QA and clean submission ZIP. No feature development, production Java change, dependency change, commit or upload. Source build: 264 passing tests, zero failures/errors/skips, exit 0. See S6-AUDIT.md for findings, including intra-layer package cycles and the fluent Builder qualification, and SESSION_HISTORY.md for package/fresh-extraction evidence.
+Explicitly authorized by the user and completed October 26-27, 2026: independent nine-pattern and architecture audit, two automated architecture checks, all six UML sources corrected/rendered, 100-point traceability and Moodle evidence draft, demonstration walkthrough, packaged console QA and clean submission ZIP. No feature development, production Java change, dependency change, commit or upload. Source build: 264 passing tests, zero failures/errors/skips, exit 0. See S6-AUDIT.md for findings, including intra-layer package cycles and the fluent Builder qualification, and engineering-history.md for package/fresh-extraction evidence.
 
 Stop after S6. Remaining work is manual Moodle metadata/template confirmation, upload and receipt verification by the user before October 30. No additional implementation is authorized.
 
 
 ## S6.1 final boundary (supersedes the S6 stop condition)
 
-Explicitly authorized October 27: eliminate intra-layer package cycles, preserve behavior and nine patterns, strengthen architecture checks, synchronize documentation/UML and regenerate/verify the submission ZIP. Six classes relocated by responsibility; all original 264 tests retained, three architecture invocations added (267 total). No feature, business-rule, dependency or console-operation changes. No commits or upload. Final command and extraction evidence: S6-AUDIT.md and SESSION_HISTORY.md. Stop after S6.1; any additional implementation requires explicit authorization.
+Explicitly authorized October 27: eliminate intra-layer package cycles, preserve behavior and nine patterns, strengthen architecture checks, synchronize documentation/UML and regenerate/verify the submission ZIP. Six classes relocated by responsibility; all original 264 tests retained, three architecture invocations added (267 total). No feature, business-rule, dependency or console-operation changes. No commits or upload. Final command and extraction evidence: S6-AUDIT.md and engineering-history.md. Stop after S6.1; any additional implementation requires explicit authorization.

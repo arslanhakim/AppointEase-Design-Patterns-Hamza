@@ -3,16 +3,21 @@ $ErrorActionPreference = 'Stop'
 Add-Type -AssemblyName System.IO.Compression
 Add-Type -AssemblyName System.IO.Compression.FileSystem
 $root = (Resolve-Path (Join-Path $PSScriptRoot '..')).Path
-$files = @('pom.xml', 'README.md', 'AGENTS.md', 'PROJECT_MEMORY.md', '.gitignore')
+$files = @('pom.xml', 'README.md', '.gitignore')
 foreach ($directory in @('src', 'docs', 'scripts')) {
     $files += Get-ChildItem -LiteralPath (Join-Path $root $directory) -Recurse -File |
-        Where-Object { $_.Extension -in @('.java', '.md', '.puml', '.svg', '.png', '.ps1') } |
+        Where-Object {
+            $_.Extension -in @('.java', '.css', '.md', '.puml', '.svg', '.png', '.ps1') -and
+            $_.FullName -notmatch '[\\/]screenshots[\\/]' -and
+            $_.FullName -notmatch '[\\/]\.(agents|codex|claude|cursor|aider[^\\/]*|cache)[\\/]' -and
+            $_.Name -notmatch '^(AGENTS|CLAUDE|GEMINI|PROJECT_MEMORY)\.md$'
+        } |
         ForEach-Object { $_.FullName.Substring($root.Length + 1).Replace('\', '/') }
 }
 $files = @($files | Sort-Object -Unique)
 foreach ($required in @('src/main/java/com/appointease/Main.java', 'src/test/java/com/appointease/ArchitectureTest.java',
-        'docs/rubric-evidence.md', 'docs/evaluation-criteria-draft.md', 'docs/S6-AUDIT.md', 'docs/SESSION_HISTORY.md',
-        'PROJECT_MEMORY.md', 'src/main/java/com/appointease/application/CommittedEventDispatcher.java',
+        'docs/rubric-evidence.md', 'docs/evaluation-criteria-draft.md', 'docs/S6-AUDIT.md', 'docs/engineering-history.md',
+        'docs/project-status.md', 'src/main/resources/com/appointease/presentation/desktop/theme.css', 'src/main/java/com/appointease/application/CommittedEventDispatcher.java',
         'src/main/java/com/appointease/domain/appointment/Appointment.java', 'scripts/demo.ps1', 'scripts/verify-console.ps1')) {
     if ($required -notin $files) { throw "Missing required file: $required" }
 }
